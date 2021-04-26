@@ -20,9 +20,11 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
+    "antd": "^4.15.3",
     "axios": "^0.21.1",
     "i18next": "^20.2.1",
     "next": "10.1.3",

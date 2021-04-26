@@ -1,45 +1,65 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Card, Checkbox, Form, Input } from 'antd'
+import { Rule } from 'rc-field-form/lib/interface'
+import { ChangeEvent, FormEvent, useMemo, useState } from 'react'
 
 import { getAuthStore } from '../../src/store/store'
 
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+}
+const tailLayout = {
+  wrapperCol: { offset: 8, span: 16 },
+}
+
 export default function RegisterPage() {
-  const [email, setEmail] = useState('test10@test.com')
-  const [password, setPassword] = useState('test')
+  const [loginFailed, setLoginFailed] = useState(false)
+  const { jwt, login, isLoading } = getAuthStore()
 
-  const { user, jwt, login } = getAuthStore()
+  console.log('login failed?', loginFailed)
 
-  async function onSubmit(event: FormEvent) {
-    event.preventDefault()
+  async function onSubmit({ email, password }) {
+    const result = await login(email, password)
 
-    login(email, password).catch(console.error)
+    setLoginFailed(!result)
   }
 
   return (
     <div className="LoginPage">
-      user is: {user && user.email}
+      {loginFailed}
       <br />
-      jwt is: {jwt}
-      <form onSubmitCapture={onSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onInput={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
-          required
-        />
+      {jwt}
+      <Card title="Login" style={{ maxWidth: 400, margin: 'auto' }}>
+        <Form
+          {...layout}
+          name="login"
+          initialValues={{ remember: true }}
+          onFinish={onSubmit}
+          onFieldsChange={() => setLoginFailed(false)}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, type: 'email', message: 'Please input your email!' }]}>
+            <Input prefix={<UserOutlined className="site-form-item-icon" />} />
+          </Form.Item>
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onInput={(event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-          required
-        />
+          <Form.Item
+            label="Password"
+            name="password"
+            help={loginFailed ? 'Invalid credentials' : undefined}
+            validateStatus={loginFailed ? 'error' : undefined}
+            rules={[{ required: true, message: 'Please input your password!' }]}>
+            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
+          </Form.Item>
 
-        <button type="submit">Create user</button>
-      </form>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit" loading={isLoading}>
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   )
 }

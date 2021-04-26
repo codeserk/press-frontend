@@ -52,42 +52,50 @@ export function useAuthStore() {
    * Login using email and password.
    * @param email
    * @param password
+   * @returns whether it was possible to login or not.
    */
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string): Promise<boolean> {
     setIsLoading(true)
 
     try {
       const response = await authApi.login({ body: { email, password } })
       setUser(response?.data.user)
       setJWT(response?.data.jwt)
-
       localStorage.setItem(LOCALSTORAGE_JWT_KEY, response?.data.jwt)
+
+      return true
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsLoading(false)
     }
 
-    setIsLoading(false)
+    return false
   }
 
   /**
    * Registers a new user using email and password.
    * @param email
    * @param password
+   * @returns whether it was possible to register or not.
    */
-  async function register(email: string, password: string) {
+  async function register(email: string, password: string): Promise<boolean> {
     setIsLoading(true)
 
     try {
       const response = await authApi.registerUser({ body: { email, password } })
       setUser(response?.data.user)
       setJWT(response?.data.jwt)
-
       localStorage.setItem(LOCALSTORAGE_JWT_KEY, response?.data.jwt)
+
+      return true
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsLoading(false)
     }
 
-    setIsLoading(false)
+    return false
   }
 
   useEffect(() => {
