@@ -5,6 +5,7 @@ import { config, dom } from '@fortawesome/fontawesome-svg-core'
 import i18n from 'i18next'
 import { AppProps } from 'next/dist/next-server/lib/router/router'
 import Head from 'next/head'
+import { useEffect } from 'react'
 import { initReactI18next } from 'react-i18next'
 
 import { resources } from '../src/locale/config'

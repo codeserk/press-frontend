@@ -1,3 +1,7 @@
 export default function HomePage() {
-  return <h1>Hello world :)</h1>
+  return (
+    <div>
+      <div className="stuff-on-top">hello world!</div>
+    </div>
+  )
 }

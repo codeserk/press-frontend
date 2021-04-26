@@ -10,6 +10,7 @@
   "scripts": {
     "lint": "eslint --fix .",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "generate-client": "docker run --rm -v \"${PWD}:/local\" -u $(id -u ${USER}):$(id -g ${USER}) --network host openapitools/openapi-generator-cli:v5.0.0 generate -i http://localhost:5050/swagger/doc.json -g typescript-axios -o /local/client/ --additional-properties useSingleRequestParameter=true",
     "dev": "next dev",
     "build": "next build",
     "export": "next export",

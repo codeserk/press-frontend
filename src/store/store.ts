@@ -1,4 +1,6 @@
-import { createContext, useContext } from 'react'
+import { createContext } from 'react'
+
+import { useAuthStore } from './auth.store'
 
 /**
  * Uses the store.
@@ -6,8 +8,14 @@ import { createContext, useContext } from 'react'
  */
 export function useStore() {
   return {
-    // game: useGameStore(),
+    auth: useAuthStore(),
   }
+}
+
+export function getAuthStore() {
+  const store = useStore()
+
+  return store.auth
 }
 
 export type Store = ReturnType<typeof useStore>
