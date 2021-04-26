@@ -1,7 +1,6 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Card, Checkbox, Form, Input } from 'antd'
-import { Rule } from 'rc-field-form/lib/interface'
-import { ChangeEvent, FormEvent, useMemo, useState } from 'react'
+import { Button, Card, Form, Input } from 'antd'
+import { useState } from 'react'
 
 import { getAuthStore } from '../../src/store/store'
 
@@ -15,9 +14,7 @@ const tailLayout = {
 
 export default function RegisterPage() {
   const [loginFailed, setLoginFailed] = useState(false)
-  const { jwt, login, isLoading } = getAuthStore()
-
-  console.log('login failed?', loginFailed)
+  const { login, isLoading } = getAuthStore()
 
   async function onSubmit({ email, password }) {
     const result = await login(email, password)
@@ -27,9 +24,6 @@ export default function RegisterPage() {
 
   return (
     <div className="LoginPage">
-      {loginFailed}
-      <br />
-      {jwt}
       <Card title="Login" style={{ maxWidth: 400, margin: 'auto' }}>
         <Form
           {...layout}
@@ -41,7 +35,7 @@ export default function RegisterPage() {
             label="Email"
             name="email"
             rules={[{ required: true, type: 'email', message: 'Please input your email!' }]}>
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} />
+            <Input prefix={<UserOutlined className="site-form-item-icon" />} disabled={isLoading} />
           </Form.Item>
 
           <Form.Item
@@ -50,7 +44,10 @@ export default function RegisterPage() {
             help={loginFailed ? 'Invalid credentials' : undefined}
             validateStatus={loginFailed ? 'error' : undefined}
             rules={[{ required: true, message: 'Please input your password!' }]}>
-            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              disabled={isLoading}
+            />
           </Form.Item>
 
           <Form.Item {...tailLayout}>

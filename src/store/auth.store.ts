@@ -2,6 +2,7 @@ import { AuthApi, Configuration, UserApi, UserEntity } from 'client'
 import { useEffect, useState } from 'react'
 
 import { http } from '../api/http'
+import { wait } from '../util/time'
 
 const LOCALSTORAGE_JWT_KEY = 'token'
 
@@ -59,6 +60,7 @@ export function useAuthStore() {
 
     try {
       const response = await authApi.login({ body: { email, password } })
+      await wait(4)
       setUser(response?.data.user)
       setJWT(response?.data.jwt)
       localStorage.setItem(LOCALSTORAGE_JWT_KEY, response?.data.jwt)
