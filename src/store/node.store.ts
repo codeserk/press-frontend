@@ -1,8 +1,8 @@
-import { CreateNodeRequest, FieldEntity, NodeEntity, SchemaEntity } from 'client'
+import { CreateNodeRequest, NodeEntity, NodeEntityTypeEnum } from 'client'
 import { useRouter } from 'next/router'
 import { createContext, useEffect, useMemo, useState } from 'react'
 
-import { fieldAPI, nodeAPI, schemaAPI } from '../api/clients'
+import { nodeAPI } from '../api/clients'
 import { RealmStore } from './realm.store'
 
 export function useNodeStore(realm: RealmStore) {
@@ -13,6 +13,9 @@ export function useNodeStore(realm: RealmStore) {
 
   // Getters
   const nodes = useMemo(() => Object.values(nodesMap), [nodesMap])
+  const scenes = useMemo(() => nodes.filter((node) => node.type === NodeEntityTypeEnum.Scene), [
+    nodes,
+  ])
   const currentNodeId = useMemo(() => router.query.nodeId as string, [router.query.nodeId])
   const currentNode = useMemo(() => nodesMap[currentNodeId], [nodesMap, currentNodeId])
 
@@ -50,6 +53,7 @@ export function useNodeStore(realm: RealmStore) {
 
   return {
     nodes,
+    scenes,
     currentNodeId,
     currentNode,
 

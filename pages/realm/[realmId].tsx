@@ -1,4 +1,5 @@
 import { Button, Divider, Form, Input, Select } from 'antd'
+import { CreateNodeRequestTypeEnum } from 'client'
 import { useContext } from 'react'
 
 import { NodeStore, NodeStoreContext } from '../../src/store/node.store'
@@ -7,15 +8,15 @@ import { SchemaStore, SchemaStoreContext } from '../../src/store/schema.store'
 
 export default function RealmPage() {
   const { currentRealm } = useContext<RealmStore>(RealmStoreContext)
-  const { schemas, createSchema } = useContext<SchemaStore>(SchemaStoreContext)
+  const { sceneSchemas, createSchema } = useContext<SchemaStore>(SchemaStoreContext)
   const { createNode } = useContext<NodeStore>(NodeStoreContext)
 
   function onCreateSchemaSubmit(params) {
-    createSchema(params.name)
+    createSchema(currentRealm.id, params)
   }
 
   function onCreateNodeSubmit(params) {
-    createNode(currentRealm.id, params)
+    createNode(currentRealm.id, { ...params, type: CreateNodeRequestTypeEnum.Scene })
   }
 
   return (
@@ -26,6 +27,12 @@ export default function RealmPage() {
         wrapperCol={{ span: 10 }}
         layout="horizontal"
         onFinish={onCreateSchemaSubmit}>
+        <Form.Item label="Type" name="type" rules={[{ required: true }]} initialValue="scene">
+          <Select>
+            <Select.Option value="scene">Scene</Select.Option>
+            <Select.Option value="nested">Nodes</Select.Option>
+          </Select>
+        </Form.Item>
         <Form.Item label="Name" name="name" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
@@ -52,7 +59,7 @@ export default function RealmPage() {
 
         <Form.Item label="Schema" name="schemaId" rules={[{ required: true }]}>
           <Select>
-            {schemas.map((schema) => (
+            {sceneSchemas.map((schema) => (
               <Select.Option key={schema.id} value={schema.id}>
                 {schema.name}
               </Select.Option>

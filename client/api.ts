@@ -74,7 +74,23 @@ export interface CreateNodeRequest {
      * @memberof CreateNodeRequest
      */
     slug: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateNodeRequest
+     */
+    type?: CreateNodeRequestTypeEnum;
 }
+
+/**
+    * @export
+    * @enum {string}
+    */
+export enum CreateNodeRequestTypeEnum {
+    Scene = 'scene',
+    Nested = 'nested'
+}
+
 /**
  * 
  * @export
@@ -87,7 +103,23 @@ export interface CreateSchemaRequest {
      * @memberof CreateSchemaRequest
      */
     name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateSchemaRequest
+     */
+    type?: CreateSchemaRequestTypeEnum;
 }
+
+/**
+    * @export
+    * @enum {string}
+    */
+export enum CreateSchemaRequestTypeEnum {
+    Scene = 'scene',
+    Nested = 'nested'
+}
+
 /**
  * 
  * @export
@@ -243,7 +275,23 @@ export interface NodeEntity {
      * @memberof NodeEntity
      */
     slug?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NodeEntity
+     */
+    type?: NodeEntityTypeEnum;
 }
+
+/**
+    * @export
+    * @enum {string}
+    */
+export enum NodeEntityTypeEnum {
+    Scene = 'scene',
+    Nested = 'nested'
+}
+
 /**
  * 
  * @export
@@ -315,6 +363,12 @@ export interface RegisterResponse {
 export interface SchemaEntity {
     /**
      * 
+     * @type {string}
+     * @memberof SchemaEntity
+     */
+    authorId?: string;
+    /**
+     * 
      * @type {Array<FieldEntity>}
      * @memberof SchemaEntity
      */
@@ -337,7 +391,23 @@ export interface SchemaEntity {
      * @memberof SchemaEntity
      */
     realmId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SchemaEntity
+     */
+    type?: SchemaEntityTypeEnum;
 }
+
+/**
+    * @export
+    * @enum {string}
+    */
+export enum SchemaEntityTypeEnum {
+    Scene = 'scene',
+    Nested = 'nested'
+}
+
 /**
  * 
  * @export

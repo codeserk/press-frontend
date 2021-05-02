@@ -11,7 +11,7 @@ import { SchemaStoreContext } from '../../store/schema.store'
 export function AppLayout(props) {
   const { realms, currentRealm } = useContext(RealmStoreContext)
   const { schemas, currentSchemaId, currentSchema, currentField } = useContext(SchemaStoreContext)
-  const { nodes, currentNode } = useContext(NodeStoreContext)
+  const { scenes, currentNode } = useContext(NodeStoreContext)
 
   return (
     <Layout>
@@ -61,7 +61,7 @@ export function AppLayout(props) {
               </Menu.SubMenu>
 
               <Menu.SubMenu key="scenes" title="Scenes">
-                {nodes.map((node) => (
+                {scenes.map((node) => (
                   <Menu.Item key={node.id}>
                     <Link href={`/realm/${currentRealm.id}/node/${node.id}`}>{node.name}</Link>
                   </Menu.Item>

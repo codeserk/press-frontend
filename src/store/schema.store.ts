@@ -1,7 +1,8 @@
-import { FieldEntity, SchemaEntity } from 'client'
+import { CreateSchemaRequest, FieldEntity, SchemaEntity } from 'client'
 import { useRouter } from 'next/router'
 import { createContext, useEffect, useMemo, useState } from 'react'
 
+import { SchemaEntityTypeEnum } from '../../client'
 import { fieldAPI, schemaAPI } from '../api/clients'
 import { RealmStore } from './realm.store'
 
@@ -14,6 +15,10 @@ export function useSchemaStore(realm: RealmStore) {
 
   // Getters
   const schemas = useMemo(() => Object.values(schemasMap), [schemasMap])
+  const sceneSchemas = useMemo(
+    () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.Scene),
+    [schemas],
+  )
   const currentSchemaId = useMemo(() => router.query.schemaId as string, [router.query.schemaId])
   const currentSchema = useMemo(() => schemasMap[currentSchemaId], [schemasMap, currentSchemaId])
 
@@ -58,8 +63,8 @@ export function useSchemaStore(realm: RealmStore) {
     setFields(fieldsById)
   }
 
-  async function createSchema(name: string) {
-    const response = await schemaAPI.createSchema({ realmId: realm.currentRealmId, body: { name } })
+  async function createSchema(realmId: string, params: CreateSchemaRequest) {
+    const response = await schemaAPI.createSchema({ realmId, body: params })
     const newSchema = response.data
 
     addSchema(newSchema)
@@ -94,6 +99,7 @@ export function useSchemaStore(realm: RealmStore) {
 
   return {
     schemas,
+    sceneSchemas,
     currentSchemaId,
     currentSchema,
 
