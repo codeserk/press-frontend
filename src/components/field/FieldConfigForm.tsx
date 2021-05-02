@@ -8,7 +8,7 @@ import {
   TagsOutlined,
 } from '@ant-design/icons'
 import { Button, Divider, Form, Space } from 'antd'
-import { FC, useContext, useState } from 'react'
+import { FC, useContext } from 'react'
 
 import { FieldEntity } from '../../../client'
 import { PrimitiveType } from '../../interfaces/primitive.interface'

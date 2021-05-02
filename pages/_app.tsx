@@ -12,6 +12,7 @@ import { initReactI18next } from 'react-i18next'
 import { AppLayout } from '../src/components/layout/AppLayout'
 import { resources } from '../src/locale/config'
 import { AuthStoreContext, useAuthStore } from '../src/store/auth.store'
+import { NodeStoreContext, useNodeStore } from '../src/store/node.store'
 import { RealmStoreContext, useRealmStore } from '../src/store/realm.store'
 import { SchemaStoreContext, useSchemaStore } from '../src/store/schema.store'
 import { Compose } from '../src/util/store'
@@ -28,6 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const auth = useAuthStore()
   const realm = useRealmStore(auth)
   const schema = useSchemaStore(realm)
+  const node = useNodeStore(realm)
   const { isInitialized, isAuthenticated } = auth
   const isForbidden = isInitialized && !isAuthenticated && !router.asPath.includes('/auth')
 
@@ -43,6 +45,7 @@ export default function App({ Component, pageProps }: AppProps) {
         [AuthStoreContext.Provider, { value: auth }],
         [RealmStoreContext.Provider, { value: realm }],
         [SchemaStoreContext.Provider, { value: schema }],
+        [NodeStoreContext.Provider, { value: node }],
       ]}>
       <Head>
         <style>{dom.css()}</style>

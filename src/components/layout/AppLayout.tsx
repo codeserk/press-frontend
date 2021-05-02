@@ -4,12 +4,14 @@ import Sider from 'antd/lib/layout/Sider'
 import Link from 'next/link'
 import { useContext } from 'react'
 
+import { NodeStoreContext } from '../../store/node.store'
 import { RealmStoreContext } from '../../store/realm.store'
 import { SchemaStoreContext } from '../../store/schema.store'
 
 export function AppLayout(props) {
   const { realms, currentRealm } = useContext(RealmStoreContext)
   const { schemas, currentSchemaId, currentSchema, currentField } = useContext(SchemaStoreContext)
+  const { nodes, currentNode } = useContext(NodeStoreContext)
 
   return (
     <Layout>
@@ -32,11 +34,13 @@ export function AppLayout(props) {
         <Sider width={200} className="site-layout-background">
           {!currentRealm && (
             <Menu mode="inline" style={{ height: '100%', borderRight: 0 }}>
-              {realms.map((realm) => (
-                <Menu.Item key={realm.id}>
-                  <Link href={`/realm/${realm.id}`}>{realm.name}</Link>
-                </Menu.Item>
-              ))}
+              <Menu.SubMenu key="schemas" title="Realms">
+                {realms.map((realm) => (
+                  <Menu.Item key={realm.id}>
+                    <Link href={`/realm/${realm.id}`}>{realm.name}</Link>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
             </Menu>
           )}
 
@@ -44,12 +48,25 @@ export function AppLayout(props) {
             <Menu
               mode="inline"
               defaultSelectedKeys={[currentSchemaId]}
+              defaultOpenKeys={['schemas', 'scenes']}
               style={{ height: '100%', borderRight: 0 }}>
-              {schemas.map((schema) => (
-                <Menu.Item key={schema.id}>
-                  <Link href={`/realm/${currentRealm.id}/schema/${schema.id}`}>{schema.name}</Link>
-                </Menu.Item>
-              ))}
+              <Menu.SubMenu key="schemas" title="Schemas">
+                {schemas.map((schema) => (
+                  <Menu.Item key={schema.id}>
+                    <Link href={`/realm/${currentRealm.id}/schema/${schema.id}`}>
+                      {schema.name}
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+
+              <Menu.SubMenu key="scenes" title="Scenes">
+                {nodes.map((node) => (
+                  <Menu.Item key={node.id}>
+                    <Link href={`/realm/${currentRealm.id}/node/${node.id}`}>{node.name}</Link>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
             </Menu>
           )}
         </Sider>
@@ -64,6 +81,13 @@ export function AppLayout(props) {
               <Breadcrumb.Item>
                 <Link href={`/realm/${currentRealm.id}/schema/${currentSchema.id}`}>
                   {currentSchema.name}
+                </Link>
+              </Breadcrumb.Item>
+            )}
+            {currentNode && (
+              <Breadcrumb.Item>
+                <Link href={`/realm/${currentRealm.id}/node/${currentNode.id}`}>
+                  {currentNode.name}
                 </Link>
               </Breadcrumb.Item>
             )}

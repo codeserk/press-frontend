@@ -58,12 +58,6 @@ export interface CreateFieldRequest {
 export interface CreateNodeRequest {
     /**
      * 
-     * @type {object}
-     * @memberof CreateNodeRequest
-     */
-    data?: object;
-    /**
-     * 
      * @type {string}
      * @memberof CreateNodeRequest
      */
@@ -73,7 +67,7 @@ export interface CreateNodeRequest {
      * @type {string}
      * @memberof CreateNodeRequest
      */
-    schemaId_validate?: string;
+    schemaId: string;
     /**
      * 
      * @type {string}
@@ -1148,6 +1142,57 @@ export const NodeApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Gets all the nodes in the given realm
+         * @summary Gets all the nodes in the given realm
+         * @param {string} realmId Realm ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getNodes: async (realmId: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'realmId' is not null or undefined
+            if (realmId === null || realmId === undefined) {
+                throw new RequiredError('realmId','Required parameter realmId was null or undefined when calling getNodes.');
+            }
+            const localVarPath = `/v1/realm/{realmId}/node`
+                .replace(`{${"realmId"}}`, encodeURIComponent(String(realmId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                    ? await configuration.apiKey("Authorization")
+                    : await configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
+
+
+    
+            const queryParameters = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                queryParameters.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                queryParameters.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1172,6 +1217,20 @@ export const NodeApiFp = function(configuration?: Configuration) {
                 return axios.request(axiosRequestArgs);
             };
         },
+        /**
+         * Gets all the nodes in the given realm
+         * @summary Gets all the nodes in the given realm
+         * @param {string} realmId Realm ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getNodes(realmId: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<NodeEntity>>> {
+            const localVarAxiosArgs = await NodeApiAxiosParamCreator(configuration).getNodes(realmId, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
     }
 };
 
@@ -1191,6 +1250,16 @@ export const NodeApiFactory = function (configuration?: Configuration, basePath?
          */
         createNode(realmId: string, body?: CreateNodeRequest, options?: any): AxiosPromise<NodeEntity> {
             return NodeApiFp(configuration).createNode(realmId, body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Gets all the nodes in the given realm
+         * @summary Gets all the nodes in the given realm
+         * @param {string} realmId Realm ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getNodes(realmId: string, options?: any): AxiosPromise<Array<NodeEntity>> {
+            return NodeApiFp(configuration).getNodes(realmId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1217,6 +1286,20 @@ export interface NodeApiCreateNodeRequest {
 }
 
 /**
+ * Request parameters for getNodes operation in NodeApi.
+ * @export
+ * @interface NodeApiGetNodesRequest
+ */
+export interface NodeApiGetNodesRequest {
+    /**
+     * Realm ID
+     * @type {string}
+     * @memberof NodeApiGetNodes
+     */
+    readonly realmId: string
+}
+
+/**
  * NodeApi - object-oriented interface
  * @export
  * @class NodeApi
@@ -1233,6 +1316,18 @@ export class NodeApi extends BaseAPI {
      */
     public createNode(requestParameters: NodeApiCreateNodeRequest, options?: any) {
         return NodeApiFp(this.configuration).createNode(requestParameters.realmId, requestParameters.body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Gets all the nodes in the given realm
+     * @summary Gets all the nodes in the given realm
+     * @param {NodeApiGetNodesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NodeApi
+     */
+    public getNodes(requestParameters: NodeApiGetNodesRequest, options?: any) {
+        return NodeApiFp(this.configuration).getNodes(requestParameters.realmId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
