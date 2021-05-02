@@ -1,6 +1,4 @@
-@import 'antd/dist/antd';
-
-// Components will go here
+@import "./variables.scss";
 
 iframe {
   position: fixed;
@@ -16,3 +14,16 @@ iframe {
 .stuff-on-top {
 
 }
+
+.ant-form .ant-form-item-with-help {
+  margin-bottom: 1em;
+}
+
+.ant-divider.danger {
+  border-top-color: fade-out($color: $color-danger, $amount: 0.6);
+  color: $color-danger;
+}
+
+
+@import "./animations.scss";
+@import './components/field/field-config-form.scss';

@@ -1,0 +1,30 @@
+.PrimitiveSelector {
+  width: 100%;
+  .ant-space {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .PrimitiveButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 80px;
+    height: 80px;
+
+    .anticon {
+      display: block;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    span {
+      margin-left: 0;
+    }
+  }
+}

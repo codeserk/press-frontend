@@ -1,8 +1,8 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Card, Form, Input } from 'antd'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
-import { getAuthStore } from '../../src/store/store'
+import { AuthStoreContext } from '../../src/store/auth.store'
 
 const layout = {
   labelCol: { span: 8 },
@@ -14,7 +14,7 @@ const tailLayout = {
 
 export default function RegisterPage() {
   const [loginFailed, setLoginFailed] = useState(false)
-  const { login, isLoading } = getAuthStore()
+  const { login, isLoading } = useContext(AuthStoreContext)
 
   async function onSubmit({ email, password }) {
     const result = await login(email, password)

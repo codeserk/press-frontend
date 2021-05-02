@@ -1,12 +1,14 @@
 import { AuthApi, Configuration, UserApi, UserEntity } from 'client'
-import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { createContext, useEffect, useState } from 'react'
 
+import { initClients } from '../api/clients'
 import { http } from '../api/http'
-import { wait } from '../util/time'
 
 const LOCALSTORAGE_JWT_KEY = 'token'
 
 export function useAuthStore() {
+  const router = useRouter()
   const authApi = new AuthApi(undefined, undefined, http)
 
   // State
@@ -36,9 +38,9 @@ export function useAuthStore() {
 
     try {
       const response = await userApi.me()
+      initClients(response?.data.jwt)
       setUser(response?.data.user)
       setJWT(response?.data.jwt)
-
       localStorage.setItem(LOCALSTORAGE_JWT_KEY, response?.data.jwt)
     } catch (error) {
       console.error(error)
@@ -60,11 +62,12 @@ export function useAuthStore() {
 
     try {
       const response = await authApi.login({ body: { email, password } })
-      await wait(4)
+      initClients(response?.data.jwt)
       setUser(response?.data.user)
       setJWT(response?.data.jwt)
       localStorage.setItem(LOCALSTORAGE_JWT_KEY, response?.data.jwt)
 
+      router.push('/realm')
       return true
     } catch (error) {
       console.log(error)
@@ -86,10 +89,12 @@ export function useAuthStore() {
 
     try {
       const response = await authApi.registerUser({ body: { email, password } })
+      initClients(response?.data.jwt)
       setUser(response?.data.user)
       setJWT(response?.data.jwt)
       localStorage.setItem(LOCALSTORAGE_JWT_KEY, response?.data.jwt)
 
+      router.push('/realm')
       return true
     } catch (error) {
       console.log(error)
@@ -116,3 +121,7 @@ export function useAuthStore() {
     register,
   }
 }
+
+export type AuthStore = ReturnType<typeof useAuthStore>
+
+export const AuthStoreContext = createContext<AuthStore>(null)
