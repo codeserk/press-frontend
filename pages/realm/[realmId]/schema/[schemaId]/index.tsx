@@ -1,12 +1,26 @@
-import { faFont } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Divider, Form, Input, List } from 'antd'
 import Title from 'antd/lib/typography/Title'
 import Link from 'next/link'
 import { useContext } from 'react'
 
+import { PRIMITIVES } from '../../../../../src/interfaces/primitive.interface'
 import { RealmStoreContext } from '../../../../../src/store/realm.store'
 import { SchemaStoreContext } from '../../../../../src/store/schema.store'
+
+function SchemaField({ realm, field }) {
+  const icon = PRIMITIVES[field.primitive].icon
+
+  return (
+    <List.Item>
+      <List.Item.Meta
+        avatar={icon}
+        title={
+          <Link href={`/realm/${realm.id}/schema/${realm.id}/field/${field.id}`}>{field.name}</Link>
+        }
+      />
+    </List.Item>
+  )
+}
 
 export default function SchemaPage() {
   const [form] = Form.useForm()
@@ -57,19 +71,7 @@ export default function SchemaPage() {
         itemLayout="horizontal"
         dataSource={fieldsInCurrentSchema}
         bordered
-        renderItem={(field) => (
-          <List.Item>
-            <List.Item.Meta
-              avatar={<FontAwesomeIcon icon={faFont} />}
-              title={
-                <Link
-                  href={`/realm/${currentRealm.id}/schema/${currentSchema.id}/field/${field.id}`}>
-                  {field.name}
-                </Link>
-              }
-            />
-          </List.Item>
-        )}
+        renderItem={(field) => <SchemaField key={field.id} realm={currentRealm} field={field} />}
       />
     </div>
   )

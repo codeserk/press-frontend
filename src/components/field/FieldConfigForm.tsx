@@ -1,38 +1,13 @@
-import {
-  CalendarOutlined,
-  CheckSquareOutlined,
-  FileImageOutlined,
-  FontColorsOutlined,
-  LinkOutlined,
-  NumberOutlined,
-  TagsOutlined,
-} from '@ant-design/icons'
 import { Button, Divider, Form, Space } from 'antd'
 import { FC, useContext, useState } from 'react'
 
 import { FieldEntity } from '../../../client'
-import { PrimitiveType } from '../../interfaces/primitive.interface'
+import { PRIMITIVES_LIST, PrimitiveType } from '../../interfaces/primitive.interface'
 import { RealmStoreContext } from '../../store/realm.store'
 import { SchemaStoreContext } from '../../store/schema.store'
 import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
 import { NumberConfigForm } from './Number/NumberConfigForm'
 import { TextConfigForm } from './Text/TextConfigForm'
-
-interface PrimitiveInfo {
-  icon: any
-  type: string
-  label: string
-}
-
-const PRIMITIVES: PrimitiveInfo[] = [
-  { icon: <FontColorsOutlined />, type: 'text', label: 'Text' },
-  { icon: <CheckSquareOutlined />, type: 'boolean', label: 'Boolean' },
-  { icon: <NumberOutlined />, type: 'number', label: 'Number' },
-  { icon: <CalendarOutlined />, type: 'other', label: 'Date/Time' },
-  { icon: <TagsOutlined />, type: 'other', label: 'Options' },
-  { icon: <FileImageOutlined />, type: 'other', label: 'Media' },
-  { icon: <LinkOutlined />, type: 'other', label: 'Link' },
-]
 
 function PrimitiveButton({ icon, name, onClick, active = false }) {
   const type = active ? 'primary' : 'text'
@@ -52,7 +27,7 @@ function PrimitiveSelector({ type, onChange }) {
   return (
     <div className="PrimitiveSelector">
       <Space size={[8, 8]} align="center" wrap>
-        {PRIMITIVES.map((primitive, index) => (
+        {PRIMITIVES_LIST.map((primitive, index) => (
           <PrimitiveButton
             key={index}
             icon={primitive.icon}
