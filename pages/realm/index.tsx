@@ -1,14 +1,40 @@
+import { Button, Divider, Form, Input } from 'antd'
+import Title from 'antd/lib/typography/Title'
 import { useContext } from 'react'
 
 import { RealmStoreContext } from '../../src/store/realm.store'
 
 export default function RealmsPage() {
-  const { realms } = useContext(RealmStoreContext)
-  console.log(realms)
+  const [form] = Form.useForm()
+  const { createRealm } = useContext(RealmStoreContext)
+
+  function createRealmHandler(params) {
+    createRealm(params.name)
+
+    form.resetFields()
+  }
 
   return (
     <div className="RealmsPage">
-      <h1>Realms</h1>
+      <Title>Realms</Title>
+
+      <Divider orientation="left">Create realm</Divider>
+      <Form
+        form={form}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 10 }}
+        layout="horizontal"
+        onFinish={createRealmHandler}>
+        <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item wrapperCol={{ offset: 4, span: 4 }}>
+          <Button type="primary" htmlType="submit">
+            Create realm
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   )
 }

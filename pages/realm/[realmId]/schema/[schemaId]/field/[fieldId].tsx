@@ -11,8 +11,6 @@ export default function FieldPage() {
     return <></>
   }
 
-  console.log(currentField)
-
   return (
     <div className="FieldPage">
       <Title>{currentField.name}</Title>

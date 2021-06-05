@@ -1,11 +1,12 @@
-import { CreateNodeRequest, NodeEntity, NodeEntityTypeEnum } from 'client'
+import { CreateNodeRequest, NodeEntity, NodeEntityTypeEnum, UpdateNodeRequest } from 'client'
 import { useRouter } from 'next/router'
 import { createContext, useEffect, useMemo, useState } from 'react'
 
 import { nodeAPI } from '../api/clients'
 import { RealmStore } from './realm.store'
+import { SchemaStore } from './schema.store'
 
-export function useNodeStore(realm: RealmStore) {
+export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
   const router = useRouter()
 
   // State
@@ -18,6 +19,13 @@ export function useNodeStore(realm: RealmStore) {
   ])
   const currentNodeId = useMemo(() => router.query.nodeId as string, [router.query.nodeId])
   const currentNode = useMemo(() => nodesMap[currentNodeId], [nodesMap, currentNodeId])
+  const currentSchema = useMemo(() => {
+    if (!currentNode) {
+      return
+    }
+
+    return schema.schemaById(currentNode.schemaId)
+  }, [currentNode, schema.schemas])
 
   // Mutations
   function addNode(node: NodeEntity) {
@@ -41,8 +49,14 @@ export function useNodeStore(realm: RealmStore) {
     const response = await nodeAPI.createNode({ realmId, body: params })
     const newNode = response.data
 
-    console.log(newNode)
     addNode(newNode)
+  }
+
+  async function updateNode(realmId: string, nodeId: string, params: UpdateNodeRequest) {
+    const response = await nodeAPI.updateNode({ realmId, nodeId, body: params })
+    const node = response.data
+
+    addNode(node)
   }
 
   useEffect(() => {
@@ -56,8 +70,10 @@ export function useNodeStore(realm: RealmStore) {
     scenes,
     currentNodeId,
     currentNode,
+    currentSchema,
 
     createNode,
+    updateNode,
   }
 }
 

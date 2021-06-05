@@ -442,6 +442,31 @@ export interface UpdateFieldRequest {
 /**
  * 
  * @export
+ * @interface UpdateNodeRequest
+ */
+export interface UpdateNodeRequest {
+    /**
+     * 
+     * @type {object}
+     * @memberof UpdateNodeRequest
+     */
+    data?: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateNodeRequest
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateNodeRequest
+     */
+    slug?: string;
+}
+/**
+ * 
+ * @export
  * @interface UserEntity
  */
 export interface UserEntity {
@@ -1263,6 +1288,73 @@ export const NodeApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Updates a node
+         * @summary Updates a node
+         * @param {string} realmId Realm ID
+         * @param {string} nodeId Node ID
+         * @param {UpdateNodeRequest} [body] Node parameters
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateNode: async (realmId: string, nodeId: string, body?: UpdateNodeRequest, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'realmId' is not null or undefined
+            if (realmId === null || realmId === undefined) {
+                throw new RequiredError('realmId','Required parameter realmId was null or undefined when calling updateNode.');
+            }
+            // verify required parameter 'nodeId' is not null or undefined
+            if (nodeId === null || nodeId === undefined) {
+                throw new RequiredError('nodeId','Required parameter nodeId was null or undefined when calling updateNode.');
+            }
+            const localVarPath = `/v1/realm/{realmId}/node/{nodeId}`
+                .replace(`{${"realmId"}}`, encodeURIComponent(String(realmId)))
+                .replace(`{${"nodeId"}}`, encodeURIComponent(String(nodeId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                    ? await configuration.apiKey("Authorization")
+                    : await configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            const queryParameters = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                queryParameters.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                queryParameters.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            const nonString = typeof body !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(body !== undefined ? body : {})
+                : (body || "");
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1301,6 +1393,22 @@ export const NodeApiFp = function(configuration?: Configuration) {
                 return axios.request(axiosRequestArgs);
             };
         },
+        /**
+         * Updates a node
+         * @summary Updates a node
+         * @param {string} realmId Realm ID
+         * @param {string} nodeId Node ID
+         * @param {UpdateNodeRequest} [body] Node parameters
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateNode(realmId: string, nodeId: string, body?: UpdateNodeRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NodeEntity>> {
+            const localVarAxiosArgs = await NodeApiAxiosParamCreator(configuration).updateNode(realmId, nodeId, body, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
     }
 };
 
@@ -1330,6 +1438,18 @@ export const NodeApiFactory = function (configuration?: Configuration, basePath?
          */
         getNodes(realmId: string, options?: any): AxiosPromise<Array<NodeEntity>> {
             return NodeApiFp(configuration).getNodes(realmId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Updates a node
+         * @summary Updates a node
+         * @param {string} realmId Realm ID
+         * @param {string} nodeId Node ID
+         * @param {UpdateNodeRequest} [body] Node parameters
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateNode(realmId: string, nodeId: string, body?: UpdateNodeRequest, options?: any): AxiosPromise<NodeEntity> {
+            return NodeApiFp(configuration).updateNode(realmId, nodeId, body, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1370,6 +1490,34 @@ export interface NodeApiGetNodesRequest {
 }
 
 /**
+ * Request parameters for updateNode operation in NodeApi.
+ * @export
+ * @interface NodeApiUpdateNodeRequest
+ */
+export interface NodeApiUpdateNodeRequest {
+    /**
+     * Realm ID
+     * @type {string}
+     * @memberof NodeApiUpdateNode
+     */
+    readonly realmId: string
+
+    /**
+     * Node ID
+     * @type {string}
+     * @memberof NodeApiUpdateNode
+     */
+    readonly nodeId: string
+
+    /**
+     * Node parameters
+     * @type {UpdateNodeRequest}
+     * @memberof NodeApiUpdateNode
+     */
+    readonly body?: UpdateNodeRequest
+}
+
+/**
  * NodeApi - object-oriented interface
  * @export
  * @class NodeApi
@@ -1398,6 +1546,18 @@ export class NodeApi extends BaseAPI {
      */
     public getNodes(requestParameters: NodeApiGetNodesRequest, options?: any) {
         return NodeApiFp(this.configuration).getNodes(requestParameters.realmId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Updates a node
+     * @summary Updates a node
+     * @param {NodeApiUpdateNodeRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NodeApi
+     */
+    public updateNode(requestParameters: NodeApiUpdateNodeRequest, options?: any) {
+        return NodeApiFp(this.configuration).updateNode(requestParameters.realmId, requestParameters.nodeId, requestParameters.body, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -1524,7 +1684,7 @@ export const RealmApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createRealm(body?: HttpCreateRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async createRealm(body?: HttpCreateRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RealmEntity>> {
             const localVarAxiosArgs = await RealmApiAxiosParamCreator(configuration).createRealm(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
@@ -1560,7 +1720,7 @@ export const RealmApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createRealm(body?: HttpCreateRequest, options?: any): AxiosPromise<void> {
+        createRealm(body?: HttpCreateRequest, options?: any): AxiosPromise<RealmEntity> {
             return RealmApiFp(configuration).createRealm(body, options).then((request) => request(axios, basePath));
         },
         /**

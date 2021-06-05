@@ -33,8 +33,11 @@ export function AppLayout(props) {
       <Layout>
         <Sider width={200} className="site-layout-background">
           {!currentRealm && (
-            <Menu mode="inline" style={{ height: '100%', borderRight: 0 }}>
-              <Menu.SubMenu key="schemas" title="Realms">
+            <Menu
+              mode="inline"
+              style={{ height: '100%', borderRight: 0 }}
+              defaultOpenKeys={['realms']}>
+              <Menu.SubMenu key="realms" title="Realms">
                 {realms.map((realm) => (
                   <Menu.Item key={realm.id}>
                     <Link href={`/realm/${realm.id}`}>{realm.name}</Link>

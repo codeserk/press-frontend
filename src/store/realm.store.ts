@@ -16,6 +16,14 @@ export function useRealmStore(auth: AuthStore) {
   const currentRealmId = useMemo(() => router.query.realmId as string, [router.query.realmId])
   const currentRealm = useMemo(() => realmsMap[currentRealmId], [realmsMap, currentRealmId])
 
+  // Mutations
+  function addRealm(realm: RealmEntity) {
+    const newRealms = { ...realmsMap }
+    newRealms[realm.id] = realm
+
+    setRealms(newRealms)
+  }
+
   // Actions
   async function loadRealm() {
     const response = await realmAPI.getRealms()
@@ -26,6 +34,12 @@ export function useRealmStore(auth: AuthStore) {
     setRealms(realmsById)
   }
 
+  async function createRealm(name: string) {
+    const response = await realmAPI.createRealm({ body: { name } })
+
+    addRealm(response.data)
+  }
+
   useEffect(() => {
     if (auth.isAuthenticated) {
       loadRealm()
@@ -34,9 +48,10 @@ export function useRealmStore(auth: AuthStore) {
 
   return {
     realms,
-
     currentRealmId,
     currentRealm,
+
+    createRealm,
   }
 }
 

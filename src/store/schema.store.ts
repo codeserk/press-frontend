@@ -32,6 +32,10 @@ export function useSchemaStore(realm: RealmStore) {
     currentSchemaId,
   ])
 
+  function schemaById(id: string): SchemaEntity | undefined {
+    return schemasMap[id]
+  }
+
   // Mutations
   function addSchema(schema: SchemaEntity) {
     const schemas = { ...schemasMap }
@@ -102,6 +106,7 @@ export function useSchemaStore(realm: RealmStore) {
     sceneSchemas,
     currentSchemaId,
     currentSchema,
+    schemaById,
 
     fields,
     currentFieldId,

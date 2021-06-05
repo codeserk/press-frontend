@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const auth = useAuthStore()
   const realm = useRealmStore(auth)
   const schema = useSchemaStore(realm)
-  const node = useNodeStore(realm)
+  const node = useNodeStore(realm, schema)
   const { isInitialized, isAuthenticated } = auth
   const isForbidden = isInitialized && !isAuthenticated && !router.asPath.includes('/auth')
 

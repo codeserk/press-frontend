@@ -1,12 +1,12 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 
-import { getAuthStore } from '../../src/store/store'
+import { AuthStoreContext } from '../../src/store/auth.store'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const { user, jwt, register } = getAuthStore()
+  const { user, jwt, register } = useContext(AuthStoreContext)
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault()
