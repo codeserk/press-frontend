@@ -8,39 +8,58 @@ import {
   TagsOutlined,
 } from '@ant-design/icons'
 import { Button, Divider, Form, Space } from 'antd'
-import { FC, useContext } from 'react'
+import { FC, useContext, useState } from 'react'
 
 import { FieldEntity } from '../../../client'
 import { PrimitiveType } from '../../interfaces/primitive.interface'
 import { RealmStoreContext } from '../../store/realm.store'
 import { SchemaStoreContext } from '../../store/schema.store'
-import { TextConfigForm } from './TextConfigForm'
+import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
+import { TextConfigForm } from './Text/TextConfigForm'
 
-function PrimitiveButton({ icon, name, active = false }) {
+interface PrimitiveInfo {
+  icon: any
+  type: string
+  label: string
+}
+
+const PRIMITIVES: PrimitiveInfo[] = [
+  { icon: <FontColorsOutlined />, type: 'text', label: 'Text' },
+  { icon: <CheckSquareOutlined />, type: 'boolean', label: 'Boolean' },
+  { icon: <NumberOutlined />, type: 'number', label: 'Number' },
+  { icon: <CalendarOutlined />, type: 'other', label: 'Date/Time' },
+  { icon: <TagsOutlined />, type: 'other', label: 'Options' },
+  { icon: <FileImageOutlined />, type: 'other', label: 'Media' },
+  { icon: <LinkOutlined />, type: 'other', label: 'Link' },
+]
+
+function PrimitiveButton({ icon, name, onClick, active = false }) {
   const type = active ? 'primary' : 'text'
 
   return (
-    <Button className={`PrimitiveButton ${active ? 'active' : ''}`} icon={icon} type={type}>
+    <Button
+      className={`PrimitiveButton ${active ? 'active' : ''}`}
+      icon={icon}
+      type={type}
+      onClick={onClick}>
       {name}
     </Button>
   )
 }
 
-function PrimitiveSelector({ type }) {
+function PrimitiveSelector({ type, onChange }) {
   return (
     <div className="PrimitiveSelector">
       <Space size={[8, 8]} align="center" wrap>
-        <PrimitiveButton icon={<FontColorsOutlined />} name="Text" active={type === 'text'} />
-        <PrimitiveButton
-          icon={<CheckSquareOutlined />}
-          name="Boolean"
-          active={type === 'boolean'}
-        />
-        <PrimitiveButton icon={<NumberOutlined />} name="Number" active={type === 'number'} />
-        <PrimitiveButton icon={<CalendarOutlined />} name="Date/Time" />
-        <PrimitiveButton icon={<TagsOutlined />} name="Options" />
-        <PrimitiveButton icon={<FileImageOutlined />} name="Media" />
-        <PrimitiveButton icon={<LinkOutlined />} name="Link" />
+        {PRIMITIVES.map((primitive, index) => (
+          <PrimitiveButton
+            key={index}
+            icon={primitive.icon}
+            name={primitive.label}
+            active={type === primitive.type}
+            onClick={() => onChange(primitive.type)}
+          />
+        ))}
       </Space>
     </div>
   )
@@ -48,6 +67,7 @@ function PrimitiveSelector({ type }) {
 
 const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<any>> = {
   [PrimitiveType.Text]: TextConfigForm,
+  [PrimitiveType.Boolean]: BooleanConfigForm,
 }
 
 interface FieldConfigFormProps {
@@ -55,16 +75,17 @@ interface FieldConfigFormProps {
 }
 
 export function FieldConfigForm({ field }: FieldConfigFormProps) {
-  const primitive = field.primitive
   const config = field.config
 
-  const PrimitiveComponent = PRIMITIVE_FORM_COMPONENT[primitive]
-
+  const [primitive, setPrimitive] = useState(field.primitive)
   const { currentRealm } = useContext(RealmStoreContext)
   const { currentSchema, updateField } = useContext(SchemaStoreContext)
 
+  const PrimitiveComponent = PRIMITIVE_FORM_COMPONENT[primitive] ?? PRIMITIVE_FORM_COMPONENT.text
+
   function onSubmit(params) {
     updateField(currentRealm.id, currentSchema.id, field.id, {
+      primitive,
       config: params,
     })
   }
@@ -80,7 +101,7 @@ export function FieldConfigForm({ field }: FieldConfigFormProps) {
         <Divider type="horizontal" orientation="left">
           Type
         </Divider>
-        <PrimitiveSelector type={primitive} />
+        <PrimitiveSelector type={primitive} onChange={setPrimitive} />
 
         <Divider type="horizontal" orientation="left">
           Config

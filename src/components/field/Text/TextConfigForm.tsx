@@ -1,6 +1,6 @@
 import { Form, InputNumber, Switch } from 'antd'
 
-export function TextConfigForm({ config, onConfigChanged }) {
+export function TextConfigForm() {
   return (
     <div className="TextPrimitive">
       <Form.Item
