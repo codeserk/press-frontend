@@ -12,8 +12,8 @@ interface TextConfig {
 export function TextDataForm({ field }: FieldDataFormProps<TextConfig>) {
   const rules: Rule[] = [
     { required: field.config.required },
-    { min: field.config.minChars },
-    { max: field.config.maxChars },
+    { type: 'string', min: field.config.minChars },
+    { type: 'string', max: field.config.maxChars },
   ]
 
   return (

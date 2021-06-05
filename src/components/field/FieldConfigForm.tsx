@@ -15,6 +15,7 @@ import { PrimitiveType } from '../../interfaces/primitive.interface'
 import { RealmStoreContext } from '../../store/realm.store'
 import { SchemaStoreContext } from '../../store/schema.store'
 import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
+import { NumberConfigForm } from './Number/NumberConfigForm'
 import { TextConfigForm } from './Text/TextConfigForm'
 
 interface PrimitiveInfo {
@@ -68,6 +69,7 @@ function PrimitiveSelector({ type, onChange }) {
 const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<any>> = {
   [PrimitiveType.Text]: TextConfigForm,
   [PrimitiveType.Boolean]: BooleanConfigForm,
+  [PrimitiveType.Number]: NumberConfigForm,
 }
 
 interface FieldConfigFormProps {
