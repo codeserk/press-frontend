@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { FieldEntity } from '../../interfaces/field.interface'
 import { PrimitiveType } from '../../interfaces/primitive.interface'
 import { BooleanDataForm } from './Boolean/BooleanDataForm'
+import { DateDataForm } from './Date/DateDataForm'
 import { NumberDataForm } from './Number/NumberDataForm'
 import { TextDataForm } from './Text/TextDataForm'
 
@@ -10,6 +11,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<FieldDataFormProps>> = 
   [PrimitiveType.Text]: TextDataForm,
   [PrimitiveType.Boolean]: BooleanDataForm,
   [PrimitiveType.Number]: NumberDataForm,
+  [PrimitiveType.Date]: DateDataForm,
 }
 
 export interface FieldDataFormProps<C = any, D = any> {

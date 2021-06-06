@@ -8,6 +8,7 @@ import { PRIMITIVES_LIST, PrimitiveType } from '../../interfaces/primitive.inter
 import { RealmStoreContext } from '../../store/realm.store'
 import { SchemaStoreContext } from '../../store/schema.store'
 import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
+import { DateConfigForm } from './Date/DateConfigForm'
 import { NumberConfigForm } from './Number/NumberConfigForm'
 import { TextConfigForm } from './Text/TextConfigForm'
 
@@ -47,6 +48,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<any>> = {
   [PrimitiveType.Text]: TextConfigForm,
   [PrimitiveType.Boolean]: BooleanConfigForm,
   [PrimitiveType.Number]: NumberConfigForm,
+  [PrimitiveType.Date]: DateConfigForm,
 }
 
 interface FieldConfigFormProps {
