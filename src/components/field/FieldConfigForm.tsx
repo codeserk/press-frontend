@@ -10,6 +10,7 @@ import { SchemaStoreContext } from '../../store/schema.store'
 import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
 import { DateConfigForm } from './Date/DateConfigForm'
 import { NumberConfigForm } from './Number/NumberConfigForm'
+import { OptionsConfigForm } from './Options/OptionsConfigForm'
 import { TextConfigForm } from './Text/TextConfigForm'
 
 function PrimitiveButton({ icon, name, onClick, active = false }) {
@@ -49,6 +50,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<any>> = {
   [PrimitiveType.Boolean]: BooleanConfigForm,
   [PrimitiveType.Number]: NumberConfigForm,
   [PrimitiveType.Date]: DateConfigForm,
+  [PrimitiveType.Options]: OptionsConfigForm,
 }
 
 interface FieldConfigFormProps {

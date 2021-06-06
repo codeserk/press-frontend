@@ -3,6 +3,7 @@ import {
   CheckSquareOutlined,
   FontColorsOutlined,
   NumberOutlined,
+  TagsOutlined,
 } from '@ant-design/icons'
 
 export enum PrimitiveType {
@@ -10,6 +11,7 @@ export enum PrimitiveType {
   Boolean = 'boolean',
   Number = 'number',
   Date = 'date',
+  Options = 'options',
 }
 
 interface PrimitiveInfo {
@@ -23,8 +25,8 @@ export const PRIMITIVES: Record<PrimitiveType, PrimitiveInfo> = {
   [PrimitiveType.Boolean]: { icon: <CheckSquareOutlined />, type: 'boolean', label: 'Boolean' },
   [PrimitiveType.Number]: { icon: <NumberOutlined />, type: 'number', label: 'Number' },
   [PrimitiveType.Date]: { icon: <CalendarOutlined />, type: 'date', label: 'Date/Time' },
+  [PrimitiveType.Options]: { icon: <TagsOutlined />, type: 'options', label: 'Options' },
   // Add when they are implemented in the BE
-  // { icon: <TagsOutlined />, type: 'other', label: 'Options' },
   // { icon: <FileImageOutlined />, type: 'other', label: 'Media' },
   // { icon: <LinkOutlined />, type: 'other', label: 'Link' },
 }

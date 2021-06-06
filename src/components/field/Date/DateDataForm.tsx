@@ -18,8 +18,9 @@ export function DateDataForm({ field }: FieldDataFormProps<DateConfig>) {
       name={field.key}
       rules={rules}
       help={field.description || null}
-      getValueProps={(value) => ({ value: moment(value) })}>
+      getValueProps={(value) => ({ value: value ? moment(value) : '' })}>
       <DatePicker
+        allowClear={!field.config.required}
         showTime={field.config.type === 'dateTime'}
         picker={field.config.type === 'time' ? 'time' : 'date'}
       />
