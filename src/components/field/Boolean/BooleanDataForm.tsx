@@ -11,7 +11,12 @@ export function BooleanDataForm({ field }: FieldDataFormProps<BooleanConfig>) {
   const rules: Rule[] = [{ required: field.config.required }]
 
   return (
-    <Form.Item label={field.name} valuePropName="checked" name={field.key} rules={rules}>
+    <Form.Item
+      label={field.name}
+      valuePropName="checked"
+      name={field.key}
+      rules={rules}
+      help={field.description || null}>
       <Switch />
     </Form.Item>
   )

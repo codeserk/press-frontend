@@ -1,4 +1,6 @@
-import { Button, Divider, Form, Space } from 'antd'
+import { Button, Divider, Form, Input, Space } from 'antd'
+import TextArea from 'antd/lib/input/TextArea'
+import { useRouter } from 'next/router'
 import { FC, useContext, useState } from 'react'
 
 import { FieldEntity } from '../../../client'
@@ -53,27 +55,37 @@ interface FieldConfigFormProps {
 
 export function FieldConfigForm({ field }: FieldConfigFormProps) {
   const config = field.config
+  const router = useRouter()
 
   const [primitive, setPrimitive] = useState(field.primitive)
   const { currentRealm } = useContext(RealmStoreContext)
-  const { currentSchema, updateField } = useContext(SchemaStoreContext)
+  const { currentSchema, updateField, deleteField } = useContext(SchemaStoreContext)
 
   const PrimitiveComponent = PRIMITIVE_FORM_COMPONENT[primitive] ?? PRIMITIVE_FORM_COMPONENT.text
 
   function onSubmit(params) {
+    const { name, description, ...config } = params
     updateField(currentRealm.id, currentSchema.id, field.id, {
+      name,
+      description,
       primitive,
-      config: params,
+      config,
     })
+  }
+
+  async function onDelete(fieldId: string) {
+    await deleteField(currentRealm.id, currentSchema.id, fieldId)
+
+    router.push(`/realm/${currentRealm.id}/schema/${currentSchema.id}`)
   }
 
   return (
     <div className="FieldConfigForm">
       <Form
         labelCol={{ span: 4 }}
-        wrapperCol={{ span: 18 }}
+        wrapperCol={{ span: 8 }}
         layout="horizontal"
-        initialValues={{ ...field.config, key: field.key }}
+        initialValues={{ ...field, ...field.config, key: field.key }}
         onFinish={onSubmit}>
         <Divider type="horizontal" orientation="left">
           Type
@@ -85,12 +97,25 @@ export function FieldConfigForm({ field }: FieldConfigFormProps) {
         </Divider>
         <PrimitiveComponent config={config} />
 
+        <Divider type="horizontal" orientation="left">
+          Visual
+        </Divider>
+        <Form.Item label="Display Name" name="name">
+          <Input />
+        </Form.Item>
+
+        <Form.Item label="Description" name="description">
+          <TextArea autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item>
+
         <Divider type="horizontal" orientation="left" className="danger">
           Danger zone
         </Divider>
 
         <Form.Item wrapperCol={{ offset: 4, span: 4 }}>
-          <Button danger>Delete field</Button>
+          <Button danger onClick={() => onDelete(field.id)}>
+            Delete field
+          </Button>
         </Form.Item>
 
         <Button type="primary" htmlType="submit">

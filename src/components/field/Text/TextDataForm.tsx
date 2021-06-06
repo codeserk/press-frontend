@@ -17,8 +17,8 @@ export function TextDataForm({ field }: FieldDataFormProps<TextConfig>) {
   ]
 
   return (
-    <Form.Item label={field.name} name={field.key} rules={rules}>
-      <Input placeholder={field.name} />
+    <Form.Item label={field.name} name={field.key} rules={rules} help={field.description || null}>
+      <Input placeholder={field.description || field.name} />
     </Form.Item>
   )
 }

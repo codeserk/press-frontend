@@ -1,17 +1,66 @@
 import { CreateSchemaRequest, FieldEntity, SchemaEntity } from 'client'
 import { useRouter } from 'next/router'
-import { createContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { SchemaEntityTypeEnum } from '../../client'
 import { fieldAPI, schemaAPI } from '../api/clients'
 import { RealmStore } from './realm.store'
 
+type SchemaReducerAction =
+  | { type: 'addOne'; newSchema: SchemaEntity }
+  | { type: 'addMany'; newSchemas: Record<string, SchemaEntity> }
+  | { type: 'removeOne'; id: string }
+
+type FieldReducerAction =
+  | { type: 'addOne'; newField: FieldEntity }
+  | { type: 'addMany'; newFields: Record<string, FieldEntity> }
+  | { type: 'removeOne'; id: string }
+
 export function useSchemaStore(realm: RealmStore) {
   const router = useRouter()
 
   // State
-  const [schemasMap, setSchemas] = useState<Record<string, SchemaEntity>>({})
-  const [fieldsMap, setFields] = useState<Record<string, FieldEntity>>({})
+  // Schemas dispatcher
+  const [schemasMap, dispatchSchemas] = useReducer(
+    (state: Record<string, SchemaEntity>, action: SchemaReducerAction) => {
+      const newState = { ...state }
+      switch (action.type) {
+        case 'addOne':
+          newState[action.newSchema.id] = action.newSchema
+          break
+        case 'addMany':
+          for (const schema of Object.values(action.newSchemas)) {
+            newState[schema.id] = schema
+          }
+          break
+        case 'removeOne':
+          delete newState[action.id]
+      }
+      return newState
+    },
+    {},
+  )
+
+  // Fields dispatcher
+  const [fieldsMap, dispatchFields] = useReducer(
+    (state: Record<string, FieldEntity>, action: FieldReducerAction) => {
+      const newState = { ...state }
+      switch (action.type) {
+        case 'addOne':
+          newState[action.newField.id] = action.newField
+          break
+        case 'addMany':
+          for (const field of Object.values(action.newFields)) {
+            newState[field.id] = field
+          }
+          break
+        case 'removeOne':
+          delete newState[action.id]
+      }
+      return newState
+    },
+    {},
+  )
 
   // Getters
   const schemas = useMemo(() => Object.values(schemasMap), [schemasMap])
@@ -38,15 +87,38 @@ export function useSchemaStore(realm: RealmStore) {
 
   // Mutations
   function addSchema(schema: SchemaEntity) {
-    const schemas = { ...schemasMap }
-    schemas[schema.id] = schema
-    setSchemas(schemas)
+    dispatchSchemas({ type: 'addOne', newSchema: schema })
   }
 
   function addField(field: FieldEntity) {
-    const fields = { ...fieldsMap }
-    fields[field.id] = field
-    setFields(fields)
+    dispatchFields({ type: 'addOne', newField: field })
+  }
+
+  function updateFieldInSchema(field: FieldEntity) {
+    const schema = schemasMap[field.schemaId]
+    if (!schema) {
+      return
+    }
+
+    let fieldIndex = schema.fields.findIndex((schemaField) => schemaField.id === field.id)
+    if (fieldIndex === -1) {
+      fieldIndex = schema.fields.length
+    }
+
+    schema.fields.splice(fieldIndex, 1, field)
+
+    addSchema(schema)
+  }
+
+  function removeFieldInSchema(field: FieldEntity) {
+    const schema = schemasMap[field.schemaId]
+    if (!schema) {
+      return
+    }
+
+    schema.fields = schema.fields.filter((schemaField) => schemaField.id !== field.id)
+
+    addSchema(schema)
   }
 
   // Actions
@@ -63,8 +135,8 @@ export function useSchemaStore(realm: RealmStore) {
       }
     }
 
-    setSchemas(schemasById)
-    setFields(fieldsById)
+    dispatchSchemas({ type: 'addMany', newSchemas: schemasById })
+    dispatchFields({ type: 'addMany', newFields: fieldsById })
   }
 
   async function createSchema(realmId: string, params: CreateSchemaRequest) {
@@ -82,6 +154,7 @@ export function useSchemaStore(realm: RealmStore) {
     })
 
     addField(response.data)
+    updateFieldInSchema(response.data)
   }
 
   async function updateField(
@@ -93,6 +166,18 @@ export function useSchemaStore(realm: RealmStore) {
     const response = await fieldAPI.updateField({ realmId, schemaId, fieldId, body: params })
 
     addField(response.data)
+    updateFieldInSchema(response.data)
+  }
+
+  async function deleteField(realmId: string, schemaId: string, fieldId: string) {
+    const field = fieldsMap[fieldId]
+    if (!field) {
+      return
+    }
+    await fieldAPI.deleteField({ realmId, schemaId, fieldId })
+
+    dispatchFields({ type: 'removeOne', id: fieldId })
+    removeFieldInSchema(field)
   }
 
   useEffect(() => {
@@ -117,6 +202,7 @@ export function useSchemaStore(realm: RealmStore) {
     createSchema,
     createField,
     updateField,
+    deleteField,
   }
 }
 

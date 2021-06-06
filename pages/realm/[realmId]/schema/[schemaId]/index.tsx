@@ -7,7 +7,7 @@ import { PRIMITIVES } from '../../../../../src/interfaces/primitive.interface'
 import { RealmStoreContext } from '../../../../../src/store/realm.store'
 import { SchemaStoreContext } from '../../../../../src/store/schema.store'
 
-function SchemaField({ realm, field }) {
+function SchemaField({ realm, schema, field }) {
   const icon = PRIMITIVES[field.primitive].icon
 
   return (
@@ -15,7 +15,9 @@ function SchemaField({ realm, field }) {
       <List.Item.Meta
         avatar={icon}
         title={
-          <Link href={`/realm/${realm.id}/schema/${realm.id}/field/${field.id}`}>{field.name}</Link>
+          <Link href={`/realm/${realm.id}/schema/${schema.id}/field/${field.id}`}>
+            {field.name}
+          </Link>
         }
       />
     </List.Item>
@@ -71,7 +73,9 @@ export default function SchemaPage() {
         itemLayout="horizontal"
         dataSource={fieldsInCurrentSchema}
         bordered
-        renderItem={(field) => <SchemaField key={field.id} realm={currentRealm} field={field} />}
+        renderItem={(field) => (
+          <SchemaField key={field.id} realm={currentRealm} schema={currentSchema} field={field} />
+        )}
       />
     </div>
   )

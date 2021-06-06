@@ -18,8 +18,8 @@ export function NumberDataForm({ field }: FieldDataFormProps<NumberConfig>) {
   console.log(rules)
 
   return (
-    <Form.Item label={field.name} name={field.key} rules={rules}>
-      <InputNumber placeholder={field.name} />
+    <Form.Item label={field.name} name={field.key} rules={rules} help={field.description || null}>
+      <InputNumber placeholder={field.description || field.name} />
     </Form.Item>
   )
 }

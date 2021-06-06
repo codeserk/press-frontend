@@ -14,7 +14,7 @@ interface PrimitiveInfo {
 
 export const PRIMITIVES: Record<PrimitiveType, PrimitiveInfo> = {
   [PrimitiveType.Text]: { icon: <FontColorsOutlined />, type: 'text', label: 'Text' },
-  [PrimitiveType.Boolean]: { icon: <CheckSquareOutlined />, type: 'boolean', label: 'Icon' },
+  [PrimitiveType.Boolean]: { icon: <CheckSquareOutlined />, type: 'boolean', label: 'Boolean' },
   [PrimitiveType.Number]: { icon: <NumberOutlined />, type: 'number', label: 'Number' },
 
   // Add when they are implemented in the BE

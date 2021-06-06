@@ -137,6 +137,12 @@ export interface FieldEntity {
      * @type {string}
      * @memberof FieldEntity
      */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FieldEntity
+     */
     id?: string;
     /**
      * 
@@ -420,6 +426,12 @@ export interface UpdateFieldRequest {
      * @memberof UpdateFieldRequest
      */
     config?: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateFieldRequest
+     */
+    description?: string;
     /**
      * 
      * @type {string}
@@ -807,6 +819,69 @@ export const FieldApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
+         * Deletes a field
+         * @summary Deletes a field
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {string} fieldId Field ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteField: async (realmId: string, schemaId: string, fieldId: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'realmId' is not null or undefined
+            if (realmId === null || realmId === undefined) {
+                throw new RequiredError('realmId','Required parameter realmId was null or undefined when calling deleteField.');
+            }
+            // verify required parameter 'schemaId' is not null or undefined
+            if (schemaId === null || schemaId === undefined) {
+                throw new RequiredError('schemaId','Required parameter schemaId was null or undefined when calling deleteField.');
+            }
+            // verify required parameter 'fieldId' is not null or undefined
+            if (fieldId === null || fieldId === undefined) {
+                throw new RequiredError('fieldId','Required parameter fieldId was null or undefined when calling deleteField.');
+            }
+            const localVarPath = `/v1/realm/{realmId}/schema/{schemaId}/field/{fieldId}`
+                .replace(`{${"realmId"}}`, encodeURIComponent(String(realmId)))
+                .replace(`{${"schemaId"}}`, encodeURIComponent(String(schemaId)))
+                .replace(`{${"fieldId"}}`, encodeURIComponent(String(fieldId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                    ? await configuration.apiKey("Authorization")
+                    : await configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
+
+
+    
+            const queryParameters = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                queryParameters.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                queryParameters.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Gets all the fields of the given schema
          * @summary Gets all the fields of the given schema
          * @param {string} realmId Realm ID
@@ -962,6 +1037,22 @@ export const FieldApiFp = function(configuration?: Configuration) {
             };
         },
         /**
+         * Deletes a field
+         * @summary Deletes a field
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {string} fieldId Field ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteField(realmId: string, schemaId: string, fieldId: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<boolean>> {
+            const localVarAxiosArgs = await FieldApiAxiosParamCreator(configuration).deleteField(realmId, schemaId, fieldId, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
          * Gets all the fields of the given schema
          * @summary Gets all the fields of the given schema
          * @param {string} realmId Realm ID
@@ -1013,6 +1104,18 @@ export const FieldApiFactory = function (configuration?: Configuration, basePath
          */
         createField(realmId: string, schemaId: string, body?: CreateFieldRequest, options?: any): AxiosPromise<FieldEntity> {
             return FieldApiFp(configuration).createField(realmId, schemaId, body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Deletes a field
+         * @summary Deletes a field
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {string} fieldId Field ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteField(realmId: string, schemaId: string, fieldId: string, options?: any): AxiosPromise<boolean> {
+            return FieldApiFp(configuration).deleteField(realmId, schemaId, fieldId, options).then((request) => request(axios, basePath));
         },
         /**
          * Gets all the fields of the given schema
@@ -1067,6 +1170,34 @@ export interface FieldApiCreateFieldRequest {
      * @memberof FieldApiCreateField
      */
     readonly body?: CreateFieldRequest
+}
+
+/**
+ * Request parameters for deleteField operation in FieldApi.
+ * @export
+ * @interface FieldApiDeleteFieldRequest
+ */
+export interface FieldApiDeleteFieldRequest {
+    /**
+     * Realm ID
+     * @type {string}
+     * @memberof FieldApiDeleteField
+     */
+    readonly realmId: string
+
+    /**
+     * Schema ID
+     * @type {string}
+     * @memberof FieldApiDeleteField
+     */
+    readonly schemaId: string
+
+    /**
+     * Field ID
+     * @type {string}
+     * @memberof FieldApiDeleteField
+     */
+    readonly fieldId: string
 }
 
 /**
@@ -1142,6 +1273,18 @@ export class FieldApi extends BaseAPI {
      */
     public createField(requestParameters: FieldApiCreateFieldRequest, options?: any) {
         return FieldApiFp(this.configuration).createField(requestParameters.realmId, requestParameters.schemaId, requestParameters.body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Deletes a field
+     * @summary Deletes a field
+     * @param {FieldApiDeleteFieldRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FieldApi
+     */
+    public deleteField(requestParameters: FieldApiDeleteFieldRequest, options?: any) {
+        return FieldApiFp(this.configuration).deleteField(requestParameters.realmId, requestParameters.schemaId, requestParameters.fieldId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
