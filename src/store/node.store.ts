@@ -15,6 +15,10 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
 
   // Getters
   const nodes = useMemo(() => Object.values(nodesMap), [nodesMap])
+  function nodeById(id: string): NodeEntity | undefined {
+    return nodesMap[id]
+  }
+
   const scenes = useMemo(() => nodes.filter((node) => node.type === NodeEntityTypeEnum.Scene), [
     nodes,
   ])
@@ -60,7 +64,6 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
 
     return result
   }, [path])
-  console.log(pathNodes)
 
   // Mutations
   function addNode(node: NodeEntity) {
@@ -111,6 +114,7 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
   }, [realm.currentRealm])
 
   return {
+    nodeById,
     pathNodes,
 
     nodes,

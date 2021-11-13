@@ -15,7 +15,6 @@ export function NumberDataForm({ field }: FieldDataFormProps<NumberConfig>) {
     { type: 'number', min: field.config.min },
     { type: 'number', max: field.config.max },
   ]
-  console.log(rules)
 
   return (
     <Form.Item label={field.name} name={field.key} rules={rules} help={field.description || null}>

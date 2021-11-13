@@ -1,4 +1,4 @@
-import { DownOutlined, MinusCircleOutlined, UserOutlined } from '@ant-design/icons'
+import { DownOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Form, Input, Menu } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -19,15 +19,15 @@ interface NodeConfig {
 }
 
 function NodesList({ field, value, onChange }) {
-  const nodes = value ?? []
-
   const router = useRouter()
   const { nodeSchemas } = useContext(SchemaStoreContext)
-  const { addLocalNode } = useContext(NodeStoreContext)
+  const { addLocalNode, nodeById } = useContext(NodeStoreContext)
+
+  const nodes = (value ?? []).map(nodeById).filter(Boolean)
 
   function addNode(schemaId: string) {
     const node = addLocalNode({ schemaId, data: {} })
-    const newNodes = [...nodes, node]
+    const newNodes = [...nodes, node.id]
 
     onChange(newNodes)
   }
@@ -52,7 +52,6 @@ function NodesList({ field, value, onChange }) {
     [nodeSchemas],
   )
 
-  console.log(field.config)
   const canAddMore = useMemo(() => !field.config.max || nodes.length < field.config.max, [
     nodes,
     field.config,
@@ -64,15 +63,9 @@ function NodesList({ field, value, onChange }) {
         return (
           <Form.Item key={index}>
             <Input.Group compact style={{ display: 'flex' }}>
-              <Form.Item
-                noStyle
-                label="Value"
-                name={['options', index, 'value']}
-                rules={[{ required: true, message: 'Value is required' }]}>
-                <Link href={`${router.asPath}/${field.key}/${node.id}`}>
-                  <Button>Check</Button>
-                </Link>
-              </Form.Item>
+              <Link href={`${router.asPath}/${field.key}/${node.id}`}>
+                <Button>Check</Button>
+              </Link>
               <Form.Item noStyle>
                 <Button shape="circle" type="link" onClick={() => removeOption(index)}>
                   <MinusCircleOutlined />
@@ -97,7 +90,8 @@ function NodesList({ field, value, onChange }) {
 }
 
 export function NodeDataForm({ field }: FieldDataFormProps<NodeConfig>) {
-  const rules: Rule[] = [{ required: field.config.required }]
+  const rules: Rule[] = []
+  //[{ required: field.config.required }]
 
   return (
     <Form.Item label={field.name} name={field.key} rules={rules} help={field.description || null}>
