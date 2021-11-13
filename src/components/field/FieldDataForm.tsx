@@ -4,6 +4,7 @@ import { FieldEntity } from '../../interfaces/field.interface'
 import { PrimitiveType } from '../../interfaces/primitive.interface'
 import { BooleanDataForm } from './Boolean/BooleanDataForm'
 import { DateDataForm } from './Date/DateDataForm'
+import { NodeDataForm } from './Node/NodeDataForm'
 import { NumberDataForm } from './Number/NumberDataForm'
 import { OptionsDataForm } from './Options/OptionsDataForm'
 import { TextDataForm } from './Text/TextDataForm'
@@ -14,6 +15,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<FieldDataFormProps>> = 
   [PrimitiveType.Number]: NumberDataForm,
   [PrimitiveType.Date]: DateDataForm,
   [PrimitiveType.Options]: OptionsDataForm,
+  [PrimitiveType.Node]: NodeDataForm,
 }
 
 export interface FieldDataFormProps<C = any, D = any> {

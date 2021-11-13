@@ -68,6 +68,10 @@ export function useSchemaStore(realm: RealmStore) {
     () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.Scene),
     [schemas],
   )
+  const nodeSchemas = useMemo(
+    () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.Nested),
+    [schemas],
+  )
   const currentSchemaId = useMemo(() => router.query.schemaId as string, [router.query.schemaId])
   const currentSchema = useMemo(() => schemasMap[currentSchemaId], [schemasMap, currentSchemaId])
 
@@ -189,6 +193,7 @@ export function useSchemaStore(realm: RealmStore) {
   return {
     schemas,
     sceneSchemas,
+    nodeSchemas,
     currentSchemaId,
     currentSchema,
     schemaById,

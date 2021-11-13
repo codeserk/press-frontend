@@ -9,6 +9,7 @@ import { RealmStoreContext } from '../../store/realm.store'
 import { SchemaStoreContext } from '../../store/schema.store'
 import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
 import { DateConfigForm } from './Date/DateConfigForm'
+import { NodeConfigForm } from './Node/NodeConfigForm'
 import { NumberConfigForm } from './Number/NumberConfigForm'
 import { OptionsConfigForm } from './Options/OptionsConfigForm'
 import { TextConfigForm } from './Text/TextConfigForm'
@@ -51,6 +52,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<any>> = {
   [PrimitiveType.Number]: NumberConfigForm,
   [PrimitiveType.Date]: DateConfigForm,
   [PrimitiveType.Options]: OptionsConfigForm,
+  [PrimitiveType.Node]: NodeConfigForm,
 }
 
 interface FieldConfigFormProps {

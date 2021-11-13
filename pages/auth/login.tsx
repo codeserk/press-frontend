@@ -28,7 +28,7 @@ export default function RegisterPage() {
         <Form
           {...layout}
           name="login"
-          initialValues={{ remember: true }}
+          initialValues={{ email: 'test@test.com', password: 'test', remember: true }}
           onFinish={onSubmit}
           onFieldsChange={() => setLoginFailed(false)}>
           <Form.Item

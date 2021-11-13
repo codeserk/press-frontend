@@ -11,7 +11,7 @@ import { SchemaStoreContext } from '../../store/schema.store'
 export function AppLayout(props) {
   const { realms, currentRealm } = useContext(RealmStoreContext)
   const { schemas, currentSchemaId, currentSchema, currentField } = useContext(SchemaStoreContext)
-  const { scenes, currentNode } = useContext(NodeStoreContext)
+  const { scenes, currentNode, pathNodes } = useContext(NodeStoreContext)
 
   return (
     <Layout>
@@ -87,13 +87,15 @@ export function AppLayout(props) {
                 </Link>
               </Breadcrumb.Item>
             )}
-            {currentNode && (
-              <Breadcrumb.Item>
-                <Link href={`/realm/${currentRealm.id}/node/${currentNode.id}`}>
-                  {currentNode.name}
-                </Link>
-              </Breadcrumb.Item>
-            )}
+
+            {currentNode &&
+              pathNodes.map((item) => (
+                <Breadcrumb.Item key={item.id}>
+                  <Link href={`/realm/${currentRealm.id}/node${item.uri}`}>
+                    {item.label ?? '<new>'}
+                  </Link>
+                </Breadcrumb.Item>
+              ))}
             {currentField && <Breadcrumb.Item>{currentField.name}</Breadcrumb.Item>}
           </Breadcrumb>
           <Content

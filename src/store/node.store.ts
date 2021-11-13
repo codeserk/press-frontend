@@ -8,6 +8,7 @@ import { SchemaStore } from './schema.store'
 
 export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
   const router = useRouter()
+  const path = (router.query.path as string[]) ?? []
 
   // State
   const [nodesMap, setNodes] = useState<Record<string, NodeEntity>>({})
@@ -17,7 +18,13 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
   const scenes = useMemo(() => nodes.filter((node) => node.type === NodeEntityTypeEnum.Scene), [
     nodes,
   ])
-  const currentNodeId = useMemo(() => router.query.nodeId as string, [router.query.nodeId])
+  const currentNodeId = useMemo(() => {
+    if (!path.length) {
+      return
+    }
+
+    return path[path.length - 1]
+  }, [router.query.path])
   const currentNode = useMemo(() => nodesMap[currentNodeId], [nodesMap, currentNodeId])
   const currentSchema = useMemo(() => {
     if (!currentNode) {
@@ -26,6 +33,34 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
 
     return schema.schemaById(currentNode.schemaId)
   }, [currentNode, schema.schemas])
+  const pathNodes = useMemo(() => {
+    const result = []
+    let uri = ''
+    for (let i = 0; i < path.length; i += 2) {
+      const id = path[i]
+      const node = nodesMap[id]
+      const key = path[i - 1]
+      const prevId = path[i - 2]
+      const prevNode = nodesMap[prevId]
+      let label = node?.name
+
+      if (key && prevNode) {
+        const schemaId = prevNode.schemaId
+        const nodeSchema = schema.schemaById(schemaId)
+        const field = nodeSchema.fields?.find((item) => item.key === key)
+        if (field) {
+          label = field.name
+        }
+      }
+
+      uri += '/' + [key, id].filter(Boolean).join('/')
+
+      result.push({ id, node, key, label, uri })
+    }
+
+    return result
+  }, [path])
+  console.log(pathNodes)
 
   // Mutations
   function addNode(node: NodeEntity) {
@@ -43,6 +78,16 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
     }
 
     setNodes(nodesById)
+  }
+
+  function addLocalNode(params: Omit<NodeEntity, 'id'>): NodeEntity {
+    const node = {
+      id: `new:${(Math.random() * 100000).toFixed(0)}`,
+      ...params,
+    }
+    addNode(node)
+
+    return node
   }
 
   async function createNode(realmId: string, params: CreateNodeRequest) {
@@ -66,12 +111,15 @@ export function useNodeStore(realm: RealmStore, schema: SchemaStore) {
   }, [realm.currentRealm])
 
   return {
+    pathNodes,
+
     nodes,
     scenes,
     currentNodeId,
     currentNode,
     currentSchema,
 
+    addLocalNode,
     createNode,
     updateNode,
   }

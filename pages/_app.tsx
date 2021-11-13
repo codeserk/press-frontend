@@ -1,5 +1,6 @@
 import '../styles/app-base.scss'
 import '../styles/app-components.scss'
+import '../styles/app-pages.scss'
 
 import { config, dom } from '@fortawesome/fontawesome-svg-core'
 import i18n from 'i18next'
