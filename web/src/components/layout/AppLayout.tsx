@@ -10,7 +10,7 @@ import { useContext } from 'react'
 export function AppLayout(props) {
   const { realms, currentRealm } = useContext(RealmStoreContext)
   const { schemas, currentSchemaId, currentSchema, currentField } = useContext(SchemaStoreContext)
-  const { scenes, currentNode, pathNodes } = useContext(NodeStoreContext)
+  const { scenes, models, currentNode, pathNodes } = useContext(NodeStoreContext)
 
   return (
     <Layout>
@@ -64,6 +64,14 @@ export function AppLayout(props) {
 
               <Menu.SubMenu key="scenes" title="Scenes">
                 {scenes.map((node) => (
+                  <Menu.Item key={node.id}>
+                    <Link href={`/realm/${currentRealm.id}/node/${node.id}`}>{node.name}</Link>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+
+              <Menu.SubMenu key="models" title="Models">
+                {models.map((node) => (
                   <Menu.Item key={node.id}>
                     <Link href={`/realm/${currentRealm.id}/node/${node.id}`}>{node.name}</Link>
                   </Menu.Item>

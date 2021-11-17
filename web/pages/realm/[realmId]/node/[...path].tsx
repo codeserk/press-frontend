@@ -1,44 +1,27 @@
-import { Button, Form } from 'antd'
-import Title from 'antd/lib/typography/Title'
+import { Card } from 'antd'
 import { NodeStoreContext } from 'core/modules/nodes/node.store'
-import { useContext } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
-import { FieldDataForm } from '../../../../src/components/field/FieldDataForm'
+import { NodeForm } from '../../../../src/components/node/NodeForm'
 
 export default function NodePage() {
-  const { currentNode, currentSchema, updateNode } = useContext(NodeStoreContext)
+  const { pathNodes } = useContext(NodeStoreContext)
 
-  function onUpdateNodeSubmit(data) {
-    updateNode(currentNode.realmId, currentNode.id, { data })
-  }
+  const $container = useRef<HTMLDivElement>()
+  const validPathNodes = useMemo(() => pathNodes.filter((item) => !!item.node), [pathNodes])
 
-  if (!currentNode || !currentSchema) {
-    return <></>
-  }
+  useEffect(() => {
+    $container.current?.scrollTo({ left: $container.current.scrollWidth, behavior: 'smooth' })
+  }, [pathNodes])
 
   return (
-    <Container className="NodePage">
-      <Title>{currentNode.name}</Title>
-
-      <div className="node-container">
-        <Form
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 10 }}
-          layout="horizontal"
-          initialValues={currentNode.data}
-          onFinish={onUpdateNodeSubmit}>
-          {currentSchema.fields.map((field) => (
-            <FieldDataForm key={field.id} field={field} data={currentNode.data} />
-          ))}
-
-          <Form.Item wrapperCol={{ offset: 4, span: 4 }}>
-            <Button type="primary" htmlType="submit">
-              Update node
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
+    <Container ref={$container} className="NodePage">
+      {validPathNodes.map((item) => (
+        <Card key={item.id}>
+          <NodeForm node={item.node} />
+        </Card>
+      ))}
     </Container>
   )
 }
@@ -46,7 +29,16 @@ export default function NodePage() {
 // Styles
 
 const Container = styled.div`
-  .node-container {
-    max-width: 500px !important;
+  margin: -24px -48px -48px -48px;
+  display: flex;
+  flex-direction: row;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* width: 400px; */
+
+  > .ant-card {
+    min-width: 400px;
+    scroll-snap-align: start;
   }
 `

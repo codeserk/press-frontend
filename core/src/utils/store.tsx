@@ -22,6 +22,7 @@ interface Entity<K> {
 
 type EntityReducerAction<K extends KeyType, E extends Entity<K>> =
   | { type: 'addOne'; item: E }
+  | { type: 'addOneInId'; id: K; item: E }
   | { type: 'addMany'; items: Record<K, E> | E[] }
   | { type: 'removeOne'; id: K }
   | { type: 'clear' }
@@ -39,6 +40,9 @@ export function entityReducer<K extends KeyType, E extends Entity<K>>(
   switch (action.type) {
     case 'addOne':
       newState[action.item.id] = action.item
+      break
+    case 'addOneInId':
+      newState[action.id] = action.item
       break
     case 'addMany': {
       const items = Array.isArray(action.items)

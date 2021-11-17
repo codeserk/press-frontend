@@ -1,24 +1,33 @@
-import { createContext, useEffect, useMemo, useReducer } from 'react'
+import { createContext, useDebugValue, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { api } from '../../api/clients'
-import { CreateNodeRequest, NodeEntity, NodeEntityTypeEnum, UpdateNodeRequest } from '../../client'
+import {
+  CreateNodeRequest,
+  NodeEntityTypeEnum,
+  SchemaEntity,
+  UpdateNodeRequest,
+} from '../../client'
 import { Route } from '../../interfaces/route.interface'
 import { EntityReducer, entityReducer } from '../../utils/store'
 import { RealmStore } from '../realms/realm.store'
 import { SchemaStore } from '../schemas/schema.store'
+import { Node } from './node.interface'
+
+export interface NodeBySchema {
+  schema: SchemaEntity
+  nodes: Node[]
+}
 
 export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStore) {
   const path = route.path ?? []
 
   // State
-  const [nodesMap, dispatchNodes] = useReducer(
-    entityReducer as EntityReducer<string, NodeEntity>,
-    {},
-  )
+  const [isLoading, setLoading] = useState(false)
+  const [nodesMap, dispatchNodes] = useReducer(entityReducer as EntityReducer<string, Node>, {})
 
   // Getters
   const nodes = useMemo(() => Object.values(nodesMap), [nodesMap])
-  function nodeById(id: string): NodeEntity | undefined {
+  function nodeById(id: string): Node | undefined {
     return nodesMap[id]
   }
 
@@ -26,6 +35,34 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
     () => nodes.filter((node) => node.type === NodeEntityTypeEnum.Scene),
     [nodes],
   )
+  const models = useMemo(
+    () => nodes.filter((node) => node.type === NodeEntityTypeEnum.Model),
+    [nodes],
+  )
+  const scenesBySchema = useMemo(() => {
+    const result: NodeBySchema[] = []
+    for (const sceneSchema of schema.sceneSchemas) {
+      const scenesInSchema = scenes.filter((scene) => scene.schemaId === sceneSchema.id)
+      if (scenesInSchema.length > 0) {
+        result.push({ schema: sceneSchema, nodes: scenesInSchema })
+      }
+    }
+
+    return result
+  }, [scenes, schema.sceneSchemas])
+
+  const modelsBySchema = useMemo(() => {
+    const result: NodeBySchema[] = []
+    for (const modelSchema of schema.modelSchemas) {
+      const modelsInSchema = models.filter((scene) => scene.schemaId === modelSchema.id)
+      if (modelsInSchema.length > 0) {
+        result.push({ schema: modelSchema, nodes: modelsInSchema })
+      }
+    }
+
+    return result
+  }, [scenes, schema.modelSchemas])
+
   const currentNodeId = useMemo(() => {
     if (!path.length) {
       return
@@ -73,18 +110,38 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
     }
 
     return result
-  }, [path])
+  }, [path, nodesMap])
+  const pathNodeIds = useMemo(() => pathNodes.map((item) => item.id), [pathNodes])
+
+  function pathForNode(id: string): string | undefined {
+    for (const item of pathNodes) {
+      if (item.id === id) {
+        return item.uri
+      }
+    }
+
+    return
+  }
 
   // Actions
   async function loadNodes() {
-    const response = await api.nodes.getNodes({ realmId: realm.currentRealmId })
+    setLoading(true)
 
-    dispatchNodes({ type: 'addMany', items: response.data })
+    try {
+      const response = await api.nodes.getNodes({ realmId: realm.currentRealmId })
+
+      dispatchNodes({ type: 'addMany', items: response.data })
+    } catch (error) {
+      console.error(error)
+    }
+
+    setLoading(false)
   }
 
-  function addLocalNode(params: Omit<NodeEntity, 'id'>): NodeEntity {
+  function addLocalNode(params: Omit<Node, 'id'>): Node {
     const node = {
       id: `new:${(Math.random() * 100000).toFixed(0)}`,
+      isNew: true,
       ...params,
     }
     dispatchNodes({ type: 'addOne', item: node })
@@ -92,16 +149,55 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
     return node
   }
 
-  async function createNode(realmId: string, params: CreateNodeRequest) {
-    const response = await api.nodes.createNode({ realmId, body: params })
+  async function saveLocalNode(id: string, params: CreateNodeRequest) {
+    setLoading(true)
 
-    dispatchNodes({ type: 'addOne', item: response.data })
+    try {
+      const node = nodesMap[id]
+      if (!node) {
+        throw new Error('Missing node')
+      }
+
+      const response = await api.nodes.createNode({
+        realmId: node.realmId,
+        body: params,
+      })
+
+      dispatchNodes({ type: 'addOne', item: response.data })
+      dispatchNodes({ type: 'addOneInId', id: node.id, item: response.data })
+    } catch (error) {
+      console.error(error)
+    }
+
+    setLoading(false)
+  }
+
+  async function createNode(realmId: string, params: CreateNodeRequest) {
+    setLoading(true)
+
+    try {
+      const response = await api.nodes.createNode({ realmId, body: params })
+
+      dispatchNodes({ type: 'addOne', item: response.data })
+    } catch (error) {
+      console.error(error)
+    }
+
+    setLoading(false)
   }
 
   async function updateNode(realmId: string, nodeId: string, params: UpdateNodeRequest) {
-    const response = await api.nodes.updateNode({ realmId, nodeId, body: params })
+    setLoading(true)
 
-    dispatchNodes({ type: 'addOne', item: response.data })
+    try {
+      const response = await api.nodes.updateNode({ realmId, nodeId, body: params })
+
+      dispatchNodes({ type: 'addOne', item: response.data })
+    } catch (error) {
+      console.error(error)
+    }
+
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -111,16 +207,23 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
   }, [realm.currentRealm])
 
   return {
+    isLoading,
     nodeById,
     pathNodes,
+    pathNodeIds,
+    pathForNode,
 
     nodes,
     scenes,
+    models,
+    scenesBySchema,
+    modelsBySchema,
     currentNodeId,
     currentNode,
     currentSchema,
 
     addLocalNode,
+    saveLocalNode,
     createNode,
     updateNode,
   }

@@ -13,7 +13,7 @@ export function generateHttpClient(config?: Config) {
   })
 
   http.interceptors.request.use((axiosConfig: AxiosRequestConfig) => {
-    console.log('making request', {
+    console.debug('making request', {
       url: `${axiosConfig.method}: ${axiosConfig.url}`,
       data: axiosConfig.data,
     })
@@ -22,7 +22,7 @@ export function generateHttpClient(config?: Config) {
   })
   http.interceptors.response.use(
     (res: AxiosResponse) => {
-      console.log('http response', {
+      console.debug('http response', {
         url: res.config.url,
         data: res.data,
       })

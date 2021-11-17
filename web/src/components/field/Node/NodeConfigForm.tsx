@@ -24,12 +24,7 @@ export function NodeConfigForm() {
       </Form.Item>
 
       <Form.Item label="Schemas" name="schemas">
-        <Select
-          mode="multiple"
-          allowClear
-          style={{ width: '100%' }}
-          placeholder="Please select"
-          defaultValue={[]}>
+        <Select mode="multiple" allowClear style={{ width: '100%' }} placeholder="Please select">
           {schemas.map((item) => (
             <Select.Option key={item.id} value={item.id}>
               {item.name}

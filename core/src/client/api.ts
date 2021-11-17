@@ -58,6 +58,12 @@ export interface CreateFieldRequest {
 export interface CreateNodeRequest {
     /**
      * 
+     * @type {object}
+     * @memberof CreateNodeRequest
+     */
+    data: object;
+    /**
+     * 
      * @type {string}
      * @memberof CreateNodeRequest
      */
@@ -88,7 +94,8 @@ export interface CreateNodeRequest {
     */
 export enum CreateNodeRequestTypeEnum {
     Scene = 'scene',
-    Nested = 'nested'
+    Model = 'model',
+    View = 'view'
 }
 
 /**
@@ -286,7 +293,13 @@ export interface NodeEntity {
      * @type {string}
      * @memberof NodeEntity
      */
-    type?: NodeEntityTypeEnum;
+    type: NodeEntityTypeEnum;
+    /**
+     * 
+     * @type {Array<NodeView>}
+     * @memberof NodeEntity
+     */
+    views?: Array<NodeView>;
 }
 
 /**
@@ -295,9 +308,35 @@ export interface NodeEntity {
     */
 export enum NodeEntityTypeEnum {
     Scene = 'scene',
-    Nested = 'nested'
+    Model = 'model',
+    View = 'view'
 }
 
+/**
+ * 
+ * @export
+ * @interface NodeView
+ */
+export interface NodeView {
+    /**
+     * 
+     * @type {Array<NodeView>}
+     * @memberof NodeView
+     */
+    children: Array<NodeView>;
+    /**
+     * 
+     * @type {object}
+     * @memberof NodeView
+     */
+    data: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof NodeView
+     */
+    schemaId: string;
+}
 /**
  * 
  * @export
@@ -411,7 +450,8 @@ export interface SchemaEntity {
     */
 export enum SchemaEntityTypeEnum {
     Scene = 'scene',
-    Nested = 'nested'
+    Model = 'model',
+    View = 'view'
 }
 
 /**

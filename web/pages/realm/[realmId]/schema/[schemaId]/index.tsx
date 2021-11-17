@@ -44,8 +44,14 @@ export default function SchemaPage() {
     <div className="SchemaPage">
       <Title>{currentSchema.name}</Title>
 
-      <Divider orientation="left">Fields</Divider>
+      <Divider orientation="left">Config</Divider>
+      <Form colon={false}>
+        <Form.Item name="name" label="Name">
+          <Input />
+        </Form.Item>
+      </Form>
 
+      <Divider orientation="left">Fields</Divider>
       <Form form={form} name="create-field" layout="inline" onFinish={createFieldHandler}>
         <Form.Item
           name="name"

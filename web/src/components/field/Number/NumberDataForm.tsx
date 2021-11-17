@@ -1,5 +1,6 @@
 import { Form, InputNumber } from 'antd'
 import { Rule } from 'rc-field-form/lib/interface'
+import styled from 'styled-components'
 
 import { FieldDataFormProps } from '../FieldDataForm'
 
@@ -17,8 +18,14 @@ export function NumberDataForm({ field }: FieldDataFormProps<NumberConfig>) {
   ]
 
   return (
-    <Form.Item label={field.name} name={field.key} rules={rules} help={field.description || null}>
+    <FormItem label={field.name} name={field.key} rules={rules} help={field.description || null}>
       <InputNumber placeholder={field.description || field.name} />
-    </Form.Item>
+    </FormItem>
   )
 }
+
+const FormItem = styled(Form.Item)`
+  .ant-input-number {
+    width: 100%;
+  }
+`

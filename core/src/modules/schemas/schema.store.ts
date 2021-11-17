@@ -23,8 +23,12 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
     () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.Scene),
     [schemas],
   )
-  const nodeSchemas = useMemo(
-    () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.Nested),
+  const modelSchemas = useMemo(
+    () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.Model),
+    [schemas],
+  )
+  const viewSchemas = useMemo(
+    () => schemas.filter((schema) => schema.type === SchemaEntityTypeEnum.View),
     [schemas],
   )
   const currentSchemaId = useMemo(() => route.schemaId as string, [route.schemaId])
@@ -148,7 +152,8 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
   return {
     schemas,
     sceneSchemas,
-    nodeSchemas,
+    modelSchemas,
+    viewSchemas,
     currentSchemaId,
     currentSchema,
     schemaById,

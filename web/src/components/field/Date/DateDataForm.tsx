@@ -1,6 +1,7 @@
 import { DatePicker, Form } from 'antd'
 import moment from 'moment'
 import { Rule } from 'rc-field-form/lib/interface'
+import styled from 'styled-components'
 
 import { FieldDataFormProps } from '../FieldDataForm'
 
@@ -13,7 +14,7 @@ export function DateDataForm({ field }: FieldDataFormProps<DateConfig>) {
   const rules: Rule[] = [{ required: field.config.required }]
 
   return (
-    <Form.Item
+    <FormItem
       label={field.name}
       name={field.key}
       rules={rules}
@@ -24,6 +25,12 @@ export function DateDataForm({ field }: FieldDataFormProps<DateConfig>) {
         showTime={field.config.type === 'dateTime'}
         picker={field.config.type === 'time' ? 'time' : 'date'}
       />
-    </Form.Item>
+    </FormItem>
   )
 }
+
+const FormItem = styled(Form.Item)`
+  .ant-picker {
+    width: 100%;
+  }
+`
