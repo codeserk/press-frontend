@@ -1,6 +1,7 @@
 import {
   CalendarOutlined,
   CheckSquareOutlined,
+  EyeOutlined,
   FontColorsOutlined,
   NodeIndexOutlined,
   NumberOutlined,
@@ -14,6 +15,7 @@ export enum PrimitiveType {
   Date = 'date',
   Options = 'options',
   Node = 'node',
+  View = 'view',
 }
 
 interface PrimitiveInfo {
@@ -29,6 +31,7 @@ export const PRIMITIVES: Record<PrimitiveType, PrimitiveInfo> = {
   [PrimitiveType.Date]: { icon: <CalendarOutlined />, type: 'date', label: 'Date/Time' },
   [PrimitiveType.Options]: { icon: <TagsOutlined />, type: 'options', label: 'Options' },
   [PrimitiveType.Node]: { icon: <NodeIndexOutlined />, type: 'node', label: 'Node' },
+  [PrimitiveType.View]: { icon: <EyeOutlined />, type: 'view', label: 'View' },
 
   // Add when they are implemented in the BE
   // { icon: <FileImageOutlined />, type: 'other', label: 'Media' },

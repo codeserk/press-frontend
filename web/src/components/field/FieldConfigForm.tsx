@@ -14,6 +14,7 @@ import { NodeConfigForm } from './Node/NodeConfigForm'
 import { NumberConfigForm } from './Number/NumberConfigForm'
 import { OptionsConfigForm } from './Options/OptionsConfigForm'
 import { TextConfigForm } from './Text/TextConfigForm'
+import { ViewConfigForm } from './View/ViewConfigForm'
 
 function PrimitiveButton({ icon, name, onClick, active = false }) {
   const type = active ? 'primary' : 'text'
@@ -85,6 +86,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<any>> = {
   [PrimitiveType.Date]: DateConfigForm,
   [PrimitiveType.Options]: OptionsConfigForm,
   [PrimitiveType.Node]: NodeConfigForm,
+  [PrimitiveType.View]: ViewConfigForm,
 }
 
 interface FieldConfigFormProps {

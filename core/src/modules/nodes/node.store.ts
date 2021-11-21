@@ -123,12 +123,47 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
     return
   }
 
+  function traverseNode(rootNode: Node) {
+    const traversed: Record<string, boolean> = {}
+    const list: Node[] = [rootNode]
+
+    while (list.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const node = list.pop()!
+      if (traversed[node.id]) {
+        continue
+      }
+
+      const nodeSchema = schema.schemaById(node.schemaId)
+      if (nodeSchema) {
+        for (const field of nodeSchema.fields) {
+          if (field.primitive === 'view') {
+            const views = ((node.data as any)[field.key] ?? []).map((view) => ({
+              ...view,
+              realmId: node.realmId,
+            }))
+            list.push(...views)
+
+            dispatchNodes({ type: 'addMany', items: views })
+          }
+        }
+      }
+
+      traversed[node.id] = true
+    }
+  }
+
   // Actions
   async function loadNodes() {
-    setLoading(true)
+    setLoading(false)
 
     try {
       const response = await api.nodes.getNodes({ realmId: realm.currentRealmId })
+
+      // Add nodes
+      for (const node of response.data) {
+        traverseNode(node)
+      }
 
       dispatchNodes({ type: 'addMany', items: response.data })
     } catch (error) {
@@ -147,6 +182,10 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
     dispatchNodes({ type: 'addOne', item: node })
 
     return node
+  }
+
+  function updateLocalNode(node: Node) {
+    dispatchNodes({ type: 'addOne', item: node })
   }
 
   async function saveLocalNode(id: string, params: CreateNodeRequest) {
@@ -201,10 +240,12 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
   }
 
   useEffect(() => {
-    if (realm.currentRealm) {
+    dispatchNodes({ type: 'clear' })
+
+    if (realm.currentRealm && schema.isInitialized) {
       loadNodes()
     }
-  }, [realm.currentRealm])
+  }, [realm.currentRealm, schema.isInitialized])
 
   return {
     isLoading,
@@ -223,6 +264,7 @@ export function useNodeStore(route: Route, realm: RealmStore, schema: SchemaStor
     currentSchema,
 
     addLocalNode,
+    updateLocalNode,
     saveLocalNode,
     createNode,
     updateNode,

@@ -9,6 +9,7 @@ import { NodeDataForm } from './Node/NodeDataForm'
 import { NumberDataForm } from './Number/NumberDataForm'
 import { OptionsDataForm } from './Options/OptionsDataForm'
 import { TextDataForm } from './Text/TextDataForm'
+import { ViewDataForm } from './View/ViewDataForm'
 
 const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<FieldDataFormProps>> = {
   [PrimitiveType.Text]: TextDataForm,
@@ -17,6 +18,7 @@ const PRIMITIVE_FORM_COMPONENT: Record<PrimitiveType, FC<FieldDataFormProps>> = 
   [PrimitiveType.Date]: DateDataForm,
   [PrimitiveType.Options]: OptionsDataForm,
   [PrimitiveType.Node]: NodeDataForm,
+  [PrimitiveType.View]: ViewDataForm,
 }
 
 export interface FieldDataFormProps<C = any, D = any> {

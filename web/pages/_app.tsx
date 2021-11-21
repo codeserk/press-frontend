@@ -48,10 +48,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <Compose
       components={[
-        [AuthStoreContext.Provider, { value: auth }],
-        [RealmStoreContext.Provider, { value: realm }],
-        [SchemaStoreContext.Provider, { value: schema }],
-        [NodeStoreContext.Provider, { value: node }],
+        [AuthStoreContext.Provider, { value: auth, displayName: 'Auth' }],
+        [RealmStoreContext.Provider, { value: realm, displayName: 'Realm' }],
+        [SchemaStoreContext.Provider, { value: schema, displayName: 'Schema' }],
+        [NodeStoreContext.Provider, { value: node, displayName: 'Node' }],
       ]}>
       <Head>
         <style>{dom.css()}</style>

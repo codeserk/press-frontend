@@ -1,4 +1,4 @@
-import { createContext, useEffect, useMemo, useReducer } from 'react'
+import { createContext, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { api } from '../../api/clients'
 import { CreateSchemaRequest, FieldEntity, SchemaEntity, SchemaEntityTypeEnum } from '../../client'
@@ -8,6 +8,7 @@ import { RealmStore } from '../realms/realm.store'
 
 export function useSchemaStore(route: Route, realm: RealmStore) {
   // State
+  const [isInitialized, setInitialized] = useState(false)
   const [schemasMap, dispatchSchemas] = useReducer(
     entityReducer as EntityReducer<string, SchemaEntity>,
     {},
@@ -86,6 +87,7 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
 
   // Actions
   async function loadSchemas() {
+    setInitialized(false)
     const response = await api.schemas.getSchemas({ realmId: realm.currentRealmId })
 
     const schemasById: Record<string, SchemaEntity> = {}
@@ -100,6 +102,7 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
 
     dispatchSchemas({ type: 'addMany', items: schemasById })
     dispatchFields({ type: 'addMany', items: fieldsById })
+    setInitialized(true)
   }
 
   async function createSchema(realmId: string, params: CreateSchemaRequest) {
@@ -144,12 +147,17 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
   }
 
   useEffect(() => {
+    dispatchSchemas({ type: 'clear' })
+    dispatchFields({ type: 'clear' })
+    setInitialized(false)
+
     if (realm.currentRealm) {
       loadSchemas()
     }
   }, [realm.currentRealm])
 
   return {
+    isInitialized,
     schemas,
     sceneSchemas,
     modelSchemas,

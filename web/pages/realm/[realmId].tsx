@@ -30,6 +30,7 @@ export default function RealmPage() {
           <Select>
             <Select.Option value="scene">Scene</Select.Option>
             <Select.Option value="model">Model</Select.Option>
+            <Select.Option value="view">View</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item label="Name" name="name" rules={[{ required: true }]}>
