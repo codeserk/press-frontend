@@ -18,22 +18,14 @@ interface ViewConfig {
   required?: boolean
 }
 
-type NodeWithSchema = Node & { schema?: SchemaEntity }
-
 function ViewsList({ node, field, value, onChange }) {
   const router = useRouter()
 
   const { currentRealmId } = useContext(RealmStoreContext)
   const { viewSchemas, modelSchemas, schemaById } = useContext(SchemaStoreContext)
-  const {
-    modelsBySchema,
-    pathNodes,
-    pathNodeIds,
-    pathForNode,
-    addLocalNode,
-    nodeById,
-    nodes,
-  } = useContext(NodeStoreContext)
+  const { pathNodes, pathNodeIds, pathForNode, addLocalNode, nodeById, nodes } = useContext(
+    NodeStoreContext,
+  )
 
   const nodePath = useMemo(() => pathForNode(node.id), [pathNodes, node])
   const populatedNodes = useMemo(
@@ -65,12 +57,6 @@ function ViewsList({ node, field, value, onChange }) {
       data: {},
     })
     const newNodes = [...nodeIds, node.id]
-
-    onChange(newNodes)
-  }
-
-  function addExistingNode(id: string) {
-    const newNodes = [...nodeIds, id]
 
     onChange(newNodes)
   }

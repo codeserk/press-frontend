@@ -119,12 +119,6 @@ export function NodeForm({ node }: Props) {
           <FieldDataForm key={field.id} node={node} field={field} data={node.data} />
         ))}
 
-      {node.type === NodeEntityTypeEnum.Scene && (
-        <div className="node-container">
-          <Divider orientation="left">Views</Divider>
-        </div>
-      )}
-
       {node.type === NodeEntityTypeEnum.View && (
         <div className="node-container">
           <Divider orientation="left">Children</Divider>

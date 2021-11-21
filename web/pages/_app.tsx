@@ -1,4 +1,5 @@
 import '../styles/antd.less'
+import 'react-quill/dist/quill.snow.css'
 
 import { config as fontAwesomeConfig, dom } from '@fortawesome/fontawesome-svg-core'
 import { resources } from 'core/i18n/resources'

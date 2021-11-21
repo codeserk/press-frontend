@@ -65,20 +65,20 @@ function NodesList({ node, field, value, onChange }) {
     })
     const newNodes = [...nodeIds, node.id]
 
-    onChange(newNodes)
+    onChange && onChange(newNodes)
   }
 
   function addExistingNode(id: string) {
     const newNodes = [...nodeIds, id]
 
-    onChange(newNodes)
+    onChange && onChange(newNodes)
   }
 
   function removeOption(index: number) {
     const newOptions = [...nodeIds]
     newOptions.splice(index, 1)
 
-    onChange(newOptions)
+    onChange && onChange(newOptions)
   }
 
   const menu = useMemo(

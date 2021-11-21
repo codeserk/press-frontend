@@ -4,12 +4,13 @@ import { FieldEntity } from 'core/client'
 import { RealmStoreContext } from 'core/modules/realms/realm.store'
 import { SchemaStoreContext } from 'core/modules/schemas/schema.store'
 import { useRouter } from 'next/router'
-import { FC, useContext, useState } from 'react'
+import { FC, useContext, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { PRIMITIVES_LIST, PrimitiveType } from '../../interfaces/primitive.interface'
 import { BooleanConfigForm } from './Boolean/BooleanConfigForm'
 import { DateConfigForm } from './Date/DateConfigForm'
+import { FieldDataForm } from './FieldDataForm'
 import { NodeConfigForm } from './Node/NodeConfigForm'
 import { NumberConfigForm } from './Number/NumberConfigForm'
 import { OptionsConfigForm } from './Options/OptionsConfigForm'
@@ -97,16 +98,31 @@ export function FieldConfigForm({ field }: FieldConfigFormProps) {
   const config = field.config
   const router = useRouter()
 
+  const [values, setValues] = useState(field)
   const [primitive, setPrimitive] = useState(field.primitive)
   const { currentRealm } = useContext(RealmStoreContext)
   const { currentSchema, updateField, deleteField } = useContext(SchemaStoreContext)
 
   const PrimitiveComponent = PRIMITIVE_FORM_COMPONENT[primitive] ?? PRIMITIVE_FORM_COMPONENT.text
 
-  function onSubmit(params) {
-    const { name, description, ...config } = params
-    updateField(currentRealm.id, currentSchema.id, field.id, {
+  const normalizedValues = useMemo(() => {
+    const { name, placeholder, description, ...config } = values
+
+    return {
       name,
+      placeholder,
+      description,
+      primitive,
+      config,
+    }
+  }, [values, primitive])
+
+  function onSubmit(params) {
+    const { name, placeholder, description, ...config } = params
+    updateField(currentRealm.id, currentSchema.id, field.id, {
+      ...field,
+      name,
+      placeholder,
       description,
       primitive,
       config,
@@ -121,11 +137,19 @@ export function FieldConfigForm({ field }: FieldConfigFormProps) {
 
   return (
     <div className="FieldConfigForm">
+      <Preview layout="vertical" size="large" colon={false}>
+        <Divider type="horizontal" orientation="left">
+          Preview
+        </Divider>
+        <FieldDataForm node={{}} field={{ ...normalizedValues, key: 'test' }} />
+      </Preview>
+
       <Form
         labelCol={{ span: 4 }}
-        wrapperCol={{ span: 8 }}
+        wrapperCol={{ span: 18 }}
         layout="horizontal"
         initialValues={{ ...field, ...field.config, key: field.key }}
+        onValuesChange={(value, values) => setValues(values)}
         onFinish={onSubmit}>
         <Divider type="horizontal" orientation="left">
           Type
@@ -141,6 +165,10 @@ export function FieldConfigForm({ field }: FieldConfigFormProps) {
           Visual
         </Divider>
         <Form.Item label="Display Name" name="name">
+          <Input />
+        </Form.Item>
+
+        <Form.Item label="Placeholder" name="placeholder">
           <Input />
         </Form.Item>
 
@@ -165,3 +193,18 @@ export function FieldConfigForm({ field }: FieldConfigFormProps) {
     </div>
   )
 }
+
+const Preview = styled(Form)`
+  width: 500px;
+
+  .ant-form-item {
+    margin-bottom: 6px;
+  }
+
+  .ant-form-item-label {
+    line-height: 1;
+    padding: 0;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+`

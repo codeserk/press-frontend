@@ -23,7 +23,7 @@ export function OptionsDataForm({ field }: FieldDataFormProps<OptionsConfig>) {
         allowClear={!field.config.required}
         mode={field.config.multiple ? 'multiple' : undefined}
         placeholder={field.description || field.name}>
-        {field.config.options.map((option, index) => (
+        {field.config.options?.map((option, index) => (
           <Select.Option key={index} value={option.value}>
             {option.label}
           </Select.Option>

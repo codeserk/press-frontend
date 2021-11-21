@@ -1,4 +1,4 @@
-import { Form, InputNumber, Switch } from 'antd'
+import { Form, InputNumber, Radio, Switch } from 'antd'
 
 export function TextConfigForm() {
   return (
@@ -17,6 +17,14 @@ export function TextConfigForm() {
 
       <Form.Item label="Max characters" name="maxChars">
         <InputNumber />
+      </Form.Item>
+
+      <Form.Item label="Type" name="type">
+        <Radio.Group>
+          <Radio.Button value="text">Text</Radio.Button>
+          <Radio.Button value="textarea">Textarea</Radio.Button>
+          <Radio.Button value="richtext">Rich text</Radio.Button>
+        </Radio.Group>
       </Form.Item>
     </div>
   )

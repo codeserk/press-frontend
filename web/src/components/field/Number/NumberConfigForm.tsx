@@ -18,6 +18,10 @@ export function NumberConfigForm() {
       <Form.Item label="Max" name="max">
         <InputNumber />
       </Form.Item>
+
+      <Form.Item label="Slider" name="slider">
+        <Switch />
+      </Form.Item>
     </div>
   )
 }
