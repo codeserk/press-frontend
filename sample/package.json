@@ -1,5 +1,5 @@
 {
-  "name": "@codeserk/press-frontend-web",
+  "name": "@codeserk/press-frontend-sample",
   "version": "0.0.1",
   "author": {
     "name": "Jose Camara",
@@ -10,8 +10,7 @@
   "scripts": {
     "lint": "eslint --fix .",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
-    "generate-client": "docker run --rm -v \"${PWD}:/local\" -u $(id -u ${USER}):$(id -g ${USER}) --network host openapitools/openapi-generator-cli:v5.0.0 generate -i http://localhost:5050/swagger/doc.json -g typescript-axios -o /local/client/ --additional-properties useSingleRequestParameter=true",
-    "dev": "next dev",
+    "dev": "next dev --port 3001",
     "build": "next build",
     "export": "next export",
     "start": "next start",
@@ -39,7 +38,6 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
-    "@types/postmate": "^1.5.2",
     "@types/react": "^17.0.3",
     "@types/react-transition-group": "^4.4.1",
     "@types/styled-components": "^5.1.15",

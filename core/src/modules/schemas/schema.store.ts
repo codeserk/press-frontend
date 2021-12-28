@@ -1,7 +1,13 @@
 import { createContext, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { api } from '../../api/clients'
-import { CreateSchemaRequest, FieldEntity, SchemaEntity, SchemaEntityTypeEnum } from '../../client'
+import {
+  CreateSchemaRequest,
+  FieldEntity,
+  SchemaEntity,
+  SchemaEntityTypeEnum,
+  UpdateSchemaRequest,
+} from '../../client'
 import { Route } from '../../interfaces/route.interface'
 import { EntityReducer, entityReducer } from '../../utils/store'
 import { RealmStore } from '../realms/realm.store'
@@ -112,6 +118,19 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
     addSchema(newSchema)
   }
 
+  async function updateSchema(realmId: string, schemaId: string, params: UpdateSchemaRequest) {
+    const response = await api.schemas.updateSchema({ realmId, schemaId, body: params })
+    const updatedSchema = response.data
+
+    addSchema(updatedSchema)
+  }
+
+  async function deleteSchema(realmId: string, schemaId: string) {
+    const response = await api.schemas.deleteSchema({ realmId, schemaId })
+
+    dispatchSchemas({ type: 'removeOne', id: schemaId })
+  }
+
   async function createField(realmId: string, schemaId: string, key: string) {
     const response = await api.fields.createField({
       realmId,
@@ -173,6 +192,9 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
     fieldsInCurrentSchema,
 
     createSchema,
+    updateSchema,
+    deleteSchema,
+
     createField,
     updateField,
     deleteField,
@@ -181,4 +203,7 @@ export function useSchemaStore(route: Route, realm: RealmStore) {
 
 export type SchemaStore = ReturnType<typeof useSchemaStore>
 
-export const SchemaStoreContext = createContext<SchemaStore>(null)
+export const SchemaStoreContext = createContext<SchemaStore>({
+  isInitialized: false,
+  schemas: [],
+} as any)

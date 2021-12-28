@@ -127,7 +127,7 @@ export function NodeForm({ node }: Props) {
 
       {schema.type !== 'view' && (
         <Form.Item wrapperCol={{ offset: 4, span: 4 }} shouldUpdate>
-          {(form) => (
+          {(form: FormInstance) => (
             <Button
               type="primary"
               htmlType="submit"

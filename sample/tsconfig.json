@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "types": [
+      "jest",
+      "node",
+      "cypress"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "core/*": ["../core/src/*"],
+      "axios": ["../node_modules/axios"],
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../core/src/**/*.ts"
+, "src/interfaces/primitive.interface.tsx"  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

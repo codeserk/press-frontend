@@ -57,31 +57,31 @@ export interface CreateFieldRequest {
  */
 export interface CreateNodeRequest {
     /**
-     * 
+     * Data for the node. The structure of the data depends on the schema, and it will be validated.
      * @type {object}
      * @memberof CreateNodeRequest
      */
-    data: object;
+    data?: object;
     /**
-     * 
+     * Name of the node.
      * @type {string}
      * @memberof CreateNodeRequest
      */
     name: string;
     /**
-     * 
+     * ID of the schema.
      * @type {string}
      * @memberof CreateNodeRequest
      */
     schemaId: string;
     /**
-     * 
+     * Slug of the node, used to create URIs
      * @type {string}
      * @memberof CreateNodeRequest
      */
     slug: string;
     /**
-     * 
+     * Type of node.
      * @type {string}
      * @memberof CreateNodeRequest
      */
@@ -516,6 +516,35 @@ export interface UpdateNodeRequest {
      */
     slug?: string;
 }
+/**
+ * 
+ * @export
+ * @interface UpdateSchemaRequest
+ */
+export interface UpdateSchemaRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateSchemaRequest
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateSchemaRequest
+     */
+    type?: UpdateSchemaRequestTypeEnum;
+}
+
+/**
+    * @export
+    * @enum {string}
+    */
+export enum UpdateSchemaRequestTypeEnum {
+    Scene = 'scene',
+    Nested = 'nested'
+}
+
 /**
  * 
  * @export
@@ -1472,6 +1501,62 @@ export const NodeApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         * Gets a Scene by its slug
+         * @summary Gets a Scene by its slug
+         * @param {string} realmId Realm ID
+         * @param {string} [slug] Scene Slug
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getScene: async (realmId: string, slug?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'realmId' is not null or undefined
+            if (realmId === null || realmId === undefined) {
+                throw new RequiredError('realmId','Required parameter realmId was null or undefined when calling getScene.');
+            }
+            const localVarPath = `/v1/realm/{realmId}/scene`
+                .replace(`{${"realmId"}}`, encodeURIComponent(String(realmId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                    ? await configuration.apiKey("Authorization")
+                    : await configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
+
+            if (slug !== undefined) {
+                localVarQueryParameter['slug'] = slug;
+            }
+
+
+    
+            const queryParameters = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                queryParameters.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                queryParameters.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Updates a node
          * @summary Updates a node
          * @param {string} realmId Realm ID
@@ -1577,6 +1662,21 @@ export const NodeApiFp = function(configuration?: Configuration) {
             };
         },
         /**
+         * Gets a Scene by its slug
+         * @summary Gets a Scene by its slug
+         * @param {string} realmId Realm ID
+         * @param {string} [slug] Scene Slug
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getScene(realmId: string, slug?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NodeEntity>> {
+            const localVarAxiosArgs = await NodeApiAxiosParamCreator(configuration).getScene(realmId, slug, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
          * Updates a node
          * @summary Updates a node
          * @param {string} realmId Realm ID
@@ -1621,6 +1721,17 @@ export const NodeApiFactory = function (configuration?: Configuration, basePath?
          */
         getNodes(realmId: string, options?: any): AxiosPromise<Array<NodeEntity>> {
             return NodeApiFp(configuration).getNodes(realmId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Gets a Scene by its slug
+         * @summary Gets a Scene by its slug
+         * @param {string} realmId Realm ID
+         * @param {string} [slug] Scene Slug
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getScene(realmId: string, slug?: string, options?: any): AxiosPromise<NodeEntity> {
+            return NodeApiFp(configuration).getScene(realmId, slug, options).then((request) => request(axios, basePath));
         },
         /**
          * Updates a node
@@ -1670,6 +1781,27 @@ export interface NodeApiGetNodesRequest {
      * @memberof NodeApiGetNodes
      */
     readonly realmId: string
+}
+
+/**
+ * Request parameters for getScene operation in NodeApi.
+ * @export
+ * @interface NodeApiGetSceneRequest
+ */
+export interface NodeApiGetSceneRequest {
+    /**
+     * Realm ID
+     * @type {string}
+     * @memberof NodeApiGetScene
+     */
+    readonly realmId: string
+
+    /**
+     * Scene Slug
+     * @type {string}
+     * @memberof NodeApiGetScene
+     */
+    readonly slug?: string
 }
 
 /**
@@ -1729,6 +1861,18 @@ export class NodeApi extends BaseAPI {
      */
     public getNodes(requestParameters: NodeApiGetNodesRequest, options?: any) {
         return NodeApiFp(this.configuration).getNodes(requestParameters.realmId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Gets a Scene by its slug
+     * @summary Gets a Scene by its slug
+     * @param {NodeApiGetSceneRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NodeApi
+     */
+    public getScene(requestParameters: NodeApiGetSceneRequest, options?: any) {
+        return NodeApiFp(this.configuration).getScene(requestParameters.realmId, requestParameters.slug, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2032,6 +2176,63 @@ export const SchemaApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
+         * Deletes a schema by its id
+         * @summary Deletes a schema by its id
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteSchema: async (realmId: string, schemaId: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'realmId' is not null or undefined
+            if (realmId === null || realmId === undefined) {
+                throw new RequiredError('realmId','Required parameter realmId was null or undefined when calling deleteSchema.');
+            }
+            // verify required parameter 'schemaId' is not null or undefined
+            if (schemaId === null || schemaId === undefined) {
+                throw new RequiredError('schemaId','Required parameter schemaId was null or undefined when calling deleteSchema.');
+            }
+            const localVarPath = `/v1/realm/{realmId}/schema/{schemaId}`
+                .replace(`{${"realmId"}}`, encodeURIComponent(String(realmId)))
+                .replace(`{${"schemaId"}}`, encodeURIComponent(String(schemaId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                    ? await configuration.apiKey("Authorization")
+                    : await configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
+
+
+    
+            const queryParameters = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                queryParameters.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                queryParameters.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Gets all the schemas in the given realm
          * @summary Gets all the schemas in the given realm
          * @param {string} realmId Realm ID
@@ -2082,6 +2283,73 @@ export const SchemaApiAxiosParamCreator = function (configuration?: Configuratio
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Updates a schema
+         * @summary Updates a schema
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {UpdateSchemaRequest} [body] Schema parameters
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSchema: async (realmId: string, schemaId: string, body?: UpdateSchemaRequest, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'realmId' is not null or undefined
+            if (realmId === null || realmId === undefined) {
+                throw new RequiredError('realmId','Required parameter realmId was null or undefined when calling updateSchema.');
+            }
+            // verify required parameter 'schemaId' is not null or undefined
+            if (schemaId === null || schemaId === undefined) {
+                throw new RequiredError('schemaId','Required parameter schemaId was null or undefined when calling updateSchema.');
+            }
+            const localVarPath = `/v1/realm/{realmId}/schema/{schemaId}`
+                .replace(`{${"realmId"}}`, encodeURIComponent(String(realmId)))
+                .replace(`{${"schemaId"}}`, encodeURIComponent(String(schemaId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                    ? await configuration.apiKey("Authorization")
+                    : await configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            const queryParameters = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                queryParameters.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                queryParameters.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            const nonString = typeof body !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(body !== undefined ? body : {})
+                : (body || "");
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2107,6 +2375,21 @@ export const SchemaApiFp = function(configuration?: Configuration) {
             };
         },
         /**
+         * Deletes a schema by its id
+         * @summary Deletes a schema by its id
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteSchema(realmId: string, schemaId: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await SchemaApiAxiosParamCreator(configuration).deleteSchema(realmId, schemaId, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
          * Gets all the schemas in the given realm
          * @summary Gets all the schemas in the given realm
          * @param {string} realmId Realm ID
@@ -2115,6 +2398,22 @@ export const SchemaApiFp = function(configuration?: Configuration) {
          */
         async getSchemas(realmId: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<SchemaEntity>>> {
             const localVarAxiosArgs = await SchemaApiAxiosParamCreator(configuration).getSchemas(realmId, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * Updates a schema
+         * @summary Updates a schema
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {UpdateSchemaRequest} [body] Schema parameters
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateSchema(realmId: string, schemaId: string, body?: UpdateSchemaRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SchemaEntity>> {
+            const localVarAxiosArgs = await SchemaApiAxiosParamCreator(configuration).updateSchema(realmId, schemaId, body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -2141,6 +2440,17 @@ export const SchemaApiFactory = function (configuration?: Configuration, basePat
             return SchemaApiFp(configuration).createSchema(realmId, body, options).then((request) => request(axios, basePath));
         },
         /**
+         * Deletes a schema by its id
+         * @summary Deletes a schema by its id
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteSchema(realmId: string, schemaId: string, options?: any): AxiosPromise<void> {
+            return SchemaApiFp(configuration).deleteSchema(realmId, schemaId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Gets all the schemas in the given realm
          * @summary Gets all the schemas in the given realm
          * @param {string} realmId Realm ID
@@ -2149,6 +2459,18 @@ export const SchemaApiFactory = function (configuration?: Configuration, basePat
          */
         getSchemas(realmId: string, options?: any): AxiosPromise<Array<SchemaEntity>> {
             return SchemaApiFp(configuration).getSchemas(realmId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Updates a schema
+         * @summary Updates a schema
+         * @param {string} realmId Realm ID
+         * @param {string} schemaId Schema ID
+         * @param {UpdateSchemaRequest} [body] Schema parameters
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSchema(realmId: string, schemaId: string, body?: UpdateSchemaRequest, options?: any): AxiosPromise<SchemaEntity> {
+            return SchemaApiFp(configuration).updateSchema(realmId, schemaId, body, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2175,6 +2497,27 @@ export interface SchemaApiCreateSchemaRequest {
 }
 
 /**
+ * Request parameters for deleteSchema operation in SchemaApi.
+ * @export
+ * @interface SchemaApiDeleteSchemaRequest
+ */
+export interface SchemaApiDeleteSchemaRequest {
+    /**
+     * Realm ID
+     * @type {string}
+     * @memberof SchemaApiDeleteSchema
+     */
+    readonly realmId: string
+
+    /**
+     * Schema ID
+     * @type {string}
+     * @memberof SchemaApiDeleteSchema
+     */
+    readonly schemaId: string
+}
+
+/**
  * Request parameters for getSchemas operation in SchemaApi.
  * @export
  * @interface SchemaApiGetSchemasRequest
@@ -2186,6 +2529,34 @@ export interface SchemaApiGetSchemasRequest {
      * @memberof SchemaApiGetSchemas
      */
     readonly realmId: string
+}
+
+/**
+ * Request parameters for updateSchema operation in SchemaApi.
+ * @export
+ * @interface SchemaApiUpdateSchemaRequest
+ */
+export interface SchemaApiUpdateSchemaRequest {
+    /**
+     * Realm ID
+     * @type {string}
+     * @memberof SchemaApiUpdateSchema
+     */
+    readonly realmId: string
+
+    /**
+     * Schema ID
+     * @type {string}
+     * @memberof SchemaApiUpdateSchema
+     */
+    readonly schemaId: string
+
+    /**
+     * Schema parameters
+     * @type {UpdateSchemaRequest}
+     * @memberof SchemaApiUpdateSchema
+     */
+    readonly body?: UpdateSchemaRequest
 }
 
 /**
@@ -2208,6 +2579,18 @@ export class SchemaApi extends BaseAPI {
     }
 
     /**
+     * Deletes a schema by its id
+     * @summary Deletes a schema by its id
+     * @param {SchemaApiDeleteSchemaRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SchemaApi
+     */
+    public deleteSchema(requestParameters: SchemaApiDeleteSchemaRequest, options?: any) {
+        return SchemaApiFp(this.configuration).deleteSchema(requestParameters.realmId, requestParameters.schemaId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Gets all the schemas in the given realm
      * @summary Gets all the schemas in the given realm
      * @param {SchemaApiGetSchemasRequest} requestParameters Request parameters.
@@ -2217,6 +2600,18 @@ export class SchemaApi extends BaseAPI {
      */
     public getSchemas(requestParameters: SchemaApiGetSchemasRequest, options?: any) {
         return SchemaApiFp(this.configuration).getSchemas(requestParameters.realmId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Updates a schema
+     * @summary Updates a schema
+     * @param {SchemaApiUpdateSchemaRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SchemaApi
+     */
+    public updateSchema(requestParameters: SchemaApiUpdateSchemaRequest, options?: any) {
+        return SchemaApiFp(this.configuration).updateSchema(requestParameters.realmId, requestParameters.schemaId, requestParameters.body, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

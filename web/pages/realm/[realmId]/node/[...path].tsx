@@ -3,6 +3,7 @@ import { NodeStoreContext } from 'core/modules/nodes/node.store'
 import { useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
+import { NodeDrawer } from '../../../../src/components/node/NodeDrawer'
 import { NodeForm } from '../../../../src/components/node/NodeForm'
 
 export default function NodePage() {
@@ -22,6 +23,8 @@ export default function NodePage() {
           <NodeForm node={item.node} />
         </Card>
       ))}
+
+      <NodeDrawer />
     </Container>
   )
 }
